@@ -1,0 +1,20 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my_postgres_container
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres/transfers_db
+      POSTGRES_USER: vrtn_user
+      POSTGRES_PASSWORD: vrtn_password
+      POSTGRES_DB: transfers_db
+    ports:
+      - "5432:5432"
+
+  pet-backend-users:
+    build:
+      context: ./pet-backend-users
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres

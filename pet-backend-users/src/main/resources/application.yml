@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://postgres:5432/transfers_db?createDatabaseIfNotExist=true
+    username: vrtn_user
+    password: vrtn_password
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: db/changelog/db.changelog-master.yml
