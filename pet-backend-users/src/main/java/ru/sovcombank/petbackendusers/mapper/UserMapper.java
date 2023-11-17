@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.sovcombank.petbackendusers.api.request.CreateUserRequest;
+import ru.sovcombank.petbackendusers.api.request.UpdateUserRequest;
 import ru.sovcombank.petbackendusers.api.response.CreateUserResponse;
 import ru.sovcombank.petbackendusers.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.dto.UserDTO;
@@ -45,6 +46,37 @@ public class UserMapper {
      */
     public User toEntity(UserDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
+    }
+
+    /**
+     * Преобразует запрос на изменение данных по клиенту в сущность пользователя.
+     *
+     * @param updateUserRequest Запрос на изменение данных по клиенту.
+     * @return Сущность пользователя.
+     */
+    public User toEntity(UpdateUserRequest updateUserRequest, User existingUser) {
+        if (updateUserRequest.getFirstName() != null) {
+            existingUser.setFirstName(updateUserRequest.getFirstName());
+        }
+        if (updateUserRequest.getLastName() != null) {
+            existingUser.setLastName(updateUserRequest.getLastName());
+        }
+        if (updateUserRequest.getFatherName() != null) {
+            existingUser.setFatherName(updateUserRequest.getFatherName());
+        }
+        if (updateUserRequest.getPhoneNumber() != null) {
+            existingUser.setPhoneNumber(updateUserRequest.getPhoneNumber());
+        }
+        if (updateUserRequest.getBirthDate() != null) {
+            existingUser.setBirthDate(updateUserRequest.getBirthDate());
+        }
+        if (updateUserRequest.getPassportNumber() != null) {
+            existingUser.setPassportNumber(updateUserRequest.getPassportNumber());
+        }
+        if (updateUserRequest.getEmail() != null) {
+            existingUser.setEmail(updateUserRequest.getEmail());
+        }
+        return modelMapper.map(updateUserRequest, User.class);
     }
 
     /**
