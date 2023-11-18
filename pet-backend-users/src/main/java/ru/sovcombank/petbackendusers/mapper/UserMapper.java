@@ -18,11 +18,6 @@ public class UserMapper {
 
     private final ModelMapper modelMapper;
 
-    /**
-     * Конструктор класса UserMapper.
-     *
-     * @param modelMapper Экземпляр ModelMapper.
-     */
     @Autowired
     public UserMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
@@ -76,7 +71,7 @@ public class UserMapper {
         if (updateUserRequest.getEmail() != null) {
             existingUser.setEmail(updateUserRequest.getEmail());
         }
-        return modelMapper.map(updateUserRequest, User.class);
+        return modelMapper.map(existingUser, User.class);
     }
 
     /**
