@@ -32,11 +32,7 @@ public class UserServiceImpl implements UserService {
     private static final String USER_CREATED_SUCCESSFULLY_MESSAGE = "Пользователь успешно создан";
     private static final String USER_UPDATED_SUCCESSFULLY_MESSAGE = "Пользователь успешно изменен";
     private static final String USER_DELETED_SUCCESSFULLY_MESSAGE = "Пользователь успешно удален";
-    private static final String ERROR_SAVING_TO_DATABASE_MESSAGE = "Ошибка при сохранении в базе данных";
-    private static final String ERROR_UPDATING_TO_DATABASE_MESSAGE = "Ошибка при изменении в базе данных";
     private static final String USER_NOT_FOUND_MESSAGE = "Не найден пользователь";
-    private static final String BAD_REQUEST_MESSAGE_PREFIX = "Некорректный запрос по полю ";
-    private static final String INTERNAL_SERVER_ERROR_MESSAGE = "Internal server error";
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
@@ -56,13 +52,11 @@ public class UserServiceImpl implements UserService {
         try {
             User createdUser = userRepository.save(userMapper.toEntity(createUserRequest));
             return new CreateUserResponse(createdUser.getId().toString(), USER_CREATED_SUCCESSFULLY_MESSAGE);
-        } catch (DataIntegrityViolationException e) {
-            if (e.getCause() instanceof ConstraintViolationException) {
-                throw new ConflictException(e);
+        } catch (DataIntegrityViolationException ex) {
+            if (ex.getCause() instanceof ConstraintViolationException) {
+                throw new ConflictException(ex);
             }
-            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE, e);
-        } catch (Exception e) {
-            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE, e);
+            throw new InternalServerErrorException(ex);
         }
     }
 
@@ -77,17 +71,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public GetUserResponse getUserById(String id) {
-        try {
-            Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
-            if (userOptional.isPresent()) {
-                return userMapper.toGetUserResponse(userOptional.get());
-            } else {
-                throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            throw new BadRequestException(BAD_REQUEST_MESSAGE_PREFIX + id);
-        } catch (Exception e) {
-            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE, e);
+
+        Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
+        if (userOptional.isPresent()) {
+            return userMapper.toGetUserResponse(userOptional.get());
+        } else {
+            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
         }
     }
 
@@ -101,15 +90,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public GetUserResponse getUserByPhoneNumber(String phoneNumber) {
-        try {
-            Optional<User> userOptional = userRepository.findByPhoneNumber(phoneNumber);
-            if (userOptional.isPresent()) {
-                return userMapper.toGetUserResponse(userOptional.get());
-            } else {
-                throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
-            }
-        } catch (Exception e) {
-            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE, e);
+        Optional<User> userOptional = userRepository.findByPhoneNumber(phoneNumber);
+        if (userOptional.isPresent()) {
+            return userMapper.toGetUserResponse(userOptional.get());
+        } else {
+            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
         }
     }
 
@@ -133,15 +118,11 @@ public class UserServiceImpl implements UserService {
             } else {
                 throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            throw new BadRequestException(BAD_REQUEST_MESSAGE_PREFIX + id);
-        } catch (DataIntegrityViolationException e) {
-            if (e.getCause() instanceof ConstraintViolationException) {
-                throw new ConflictException(e);
+        } catch (DataIntegrityViolationException ex) {
+            if (ex.getCause() instanceof ConstraintViolationException) {
+                throw new ConflictException(ex);
             }
-            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE, e);
-        } catch (Exception e) {
-            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE, e);
+            throw new InternalServerErrorException(ex);
         }
     }
 
@@ -155,21 +136,15 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public DeleteUserResponse deleteUser(String id) {
-        try {
-            // Проверяем существование клиента по переданному идентификатору
-            Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                user.setIsDeleted(true);
-                userRepository.save(user);
-                return new DeleteUserResponse(USER_DELETED_SUCCESSFULLY_MESSAGE);
-            } else {
-                throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            throw new BadRequestException(BAD_REQUEST_MESSAGE_PREFIX + id);
-        } catch (Exception e) {
-            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE, e);
+        // Проверяем существование клиента по переданному идентификатору
+        Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setIsDeleted(true);
+            userRepository.save(user);
+            return new DeleteUserResponse(USER_DELETED_SUCCESSFULLY_MESSAGE);
+        } else {
+            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
         }
     }
 }
