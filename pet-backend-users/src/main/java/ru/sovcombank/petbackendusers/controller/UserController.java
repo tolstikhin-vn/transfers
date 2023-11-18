@@ -1,6 +1,7 @@
 package ru.sovcombank.petbackendusers.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,8 @@ import ru.sovcombank.petbackendusers.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.api.response.UpdateUserResponse;
 import ru.sovcombank.petbackendusers.service.UserService;
 
+import java.util.Objects;
+
 /**
  * Контроллер для управления пользователями.
  */
@@ -27,6 +30,8 @@ import ru.sovcombank.petbackendusers.service.UserService;
 public class UserController {
 
     private final UserService userService;
+
+    private static final String INVALID_REQUEST_BY_FIELD = "Некорректный запрос по полю ";
 
     @Autowired
     public UserController(UserService userService) {
@@ -40,7 +45,12 @@ public class UserController {
      * @return Ответ с результатом создания клиента.
      */
     @PostMapping("/new")
-    public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest createUserRequest, BindingResult result) {
+        if (result.hasErrors()) {
+            String fieldName = Objects.requireNonNull(result.getFieldError()).getField();
+
+            return ResponseEntity.badRequest().body(INVALID_REQUEST_BY_FIELD + fieldName);
+        }
         CreateUserResponse response = userService.createUser(createUserRequest);
         return ResponseEntity.ok(response);
     }
@@ -71,7 +81,13 @@ public class UserController {
      * @return Ответ с результатом изменения данных по клиенту.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable String id,@Valid @RequestBody UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid @RequestBody UpdateUserRequest updateUserRequest, BindingResult result) {
+        if (result.hasErrors()) {
+            String fieldName = Objects.requireNonNull(result.getFieldError()).getField();
+
+            return ResponseEntity.badRequest().body(INVALID_REQUEST_BY_FIELD + fieldName);
+        }
+
         UpdateUserResponse response = userService.updateUser(id, updateUserRequest);
         return ResponseEntity.ok(response);
     }
