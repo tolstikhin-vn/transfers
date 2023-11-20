@@ -67,6 +67,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Обрабатывает запрос на получение информации о пользователе по номеру телефона.
+     *
+     * @param phoneNumber Номер телефона клиента.
+     * @return Ответ с информацией о пользователе.
+     */
     @GetMapping("/phone-number/{phoneNumber}")
     public ResponseEntity<Object> getUserByPhoneNumber(@PathVariable String phoneNumber) {
         GetUserResponse response = userService.getUserByPhoneNumber(phoneNumber);
@@ -96,7 +102,7 @@ public class UserController {
      * Обрабатывает запрос на удаление клиента.
      *
      * @param id Идентификатор клиента.
-     * @return Ответ с результатом изменения данных по клиенту.
+     * @return Ответ с результатом удаления клиента.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable String id) {
