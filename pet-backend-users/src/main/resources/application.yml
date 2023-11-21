@@ -1,4 +1,9 @@
+server:
+  port: 8081
+
 spring:
+  application:
+    name: pet-backend-users
   jpa:
     show-sql: true
   datasource:
