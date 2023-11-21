@@ -1,0 +1,59 @@
+package ru.sovcombank.petbackendaccounts.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity(name = "accounts")
+public class Account {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false, unique = true)
+    private String accountNumber;
+
+    @Column(nullable = false)
+    private Integer clientId;
+
+    @Column(nullable = false)
+    private String cur;
+
+    @Column(nullable = false)
+    private BigDecimal balance = new BigDecimal(0);
+
+    @Column(nullable = false)
+    private LocalDateTime createDateTime = LocalDateTime.now();
+
+    @Column(nullable = false, unique = true)
+    private boolean isMain;
+
+    @Column(nullable = false, unique = true)
+    private boolean isClosed = false;
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", clientId=" + clientId +
+                ", cur='" + cur + '\'' +
+                ", balance=" + balance +
+                ", createDateTime=" + createDateTime +
+                ", isMain=" + isMain +
+                ", isClosed=" + isClosed +
+                '}';
+    }
+}
