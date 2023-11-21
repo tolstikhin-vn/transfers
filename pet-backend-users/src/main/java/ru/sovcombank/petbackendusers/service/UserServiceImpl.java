@@ -10,7 +10,6 @@ import ru.sovcombank.petbackendusers.api.response.CreateUserResponse;
 import ru.sovcombank.petbackendusers.api.response.DeleteUserResponse;
 import ru.sovcombank.petbackendusers.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.api.response.UpdateUserResponse;
-import ru.sovcombank.petbackendusers.exception.BadRequestException;
 import ru.sovcombank.petbackendusers.exception.ConflictException;
 import ru.sovcombank.petbackendusers.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendusers.exception.UserNotFoundException;
@@ -66,7 +65,6 @@ public class UserServiceImpl implements UserService {
      * @param id Идентификатор клиента.
      * @return Ответ с информацией о пользователе.
      * @throws UserNotFoundException        В случае, если пользователь не найден.
-     * @throws BadRequestException          В случае некорректного запроса по полю id.
      * @throws InternalServerErrorException В случае внутренней ошибки сервера.
      */
     @Override
