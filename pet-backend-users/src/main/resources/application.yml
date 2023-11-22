@@ -13,3 +13,9 @@ spring:
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: db/changelog/db.changelog-master.yml
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/uereka
+#    registerWithEureka: true

@@ -65,7 +65,6 @@ public class UserServiceImpl implements UserService {
      * @param id Идентификатор клиента.
      * @return Ответ с информацией о пользователе.
      * @throws UserNotFoundException        В случае, если пользователь не найден.
-     * @throws InternalServerErrorException В случае внутренней ошибки сервера.
      */
     @Override
     public GetUserResponse getUserById(String id) {
@@ -84,7 +83,6 @@ public class UserServiceImpl implements UserService {
      * @param phoneNumber Идентификатор клиента.
      * @return Ответ с информацией о пользователе.
      * @throws UserNotFoundException        В случае, если пользователь не найден.
-     * @throws InternalServerErrorException В случае внутренней ошибки сервера.
      */
     @Override
     public GetUserResponse getUserByPhoneNumber(String phoneNumber) {
@@ -103,7 +101,6 @@ public class UserServiceImpl implements UserService {
      * @param updateUserRequest Запрос на изменение данных.
      * @return Ответ с сообщением.
      * @throws UserNotFoundException        В случае, если пользователь не найден.
-     * @throws InternalServerErrorException В случае внутренней ошибки сервера.
      */
     @Override
     public UpdateUserResponse updateUser(String id, UpdateUserRequest updateUserRequest) {
@@ -130,7 +127,6 @@ public class UserServiceImpl implements UserService {
      * @param id Идентификатор клиента.
      * @return Ответ с сообщением.
      * @throws UserNotFoundException        В случае, если пользователь не найден.
-     * @throws InternalServerErrorException В случае внутренней ошибки сервера.
      */
     @Override
     public DeleteUserResponse deleteUser(String id) {
