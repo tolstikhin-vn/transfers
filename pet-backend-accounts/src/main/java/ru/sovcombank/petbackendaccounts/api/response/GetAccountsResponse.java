@@ -3,17 +3,16 @@ package ru.sovcombank.petbackendaccounts.api.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.sovcombank.petbackendaccounts.dto.AccountDTO;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAccountResponse {
+public class GetAccountsResponse {
 
-    private String accountNumber;
+    private String clientId;
 
-    private String message;
-
-    public CreateAccountResponse(String message) {
-        this.message = message;
-    }
+    private List<AccountDTO> accountNumbers;
 }
