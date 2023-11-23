@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
                 .map(error -> ((FieldError) error).getField())
                 .collect(Collectors.toList());
 
-        String errorMessage = "Некорректный запрос по полю: " + String.join(", ", invalidFields);
+        String errorMessage = "Некорректный запрос по полю " + String.join(", ", invalidFields);
 
         return new ResponseEntity<>(new MessageErrorResponse(errorMessage), HttpStatus.BAD_REQUEST);
     }
