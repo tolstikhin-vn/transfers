@@ -38,22 +38,8 @@ public class Account {
     private LocalDateTime createDateTime = LocalDateTime.now();
 
     @Column(nullable = false, unique = true)
-    private boolean isMain;
+    private boolean isMain = true;
 
     @Column(nullable = false, unique = true)
     private boolean isClosed = false;
-
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", clientId=" + clientId +
-                ", cur='" + cur + '\'' +
-                ", balance=" + balance +
-                ", createDateTime=" + createDateTime +
-                ", isMain=" + isMain +
-                ", isClosed=" + isClosed +
-                '}';
-    }
 }
