@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendusers.api.response;
+package ru.sovcombank.petbackendusers.model.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

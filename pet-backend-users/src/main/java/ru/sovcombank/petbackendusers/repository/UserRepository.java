@@ -1,7 +1,7 @@
 package ru.sovcombank.petbackendusers.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.sovcombank.petbackendusers.model.User;
+import ru.sovcombank.petbackendusers.model.entity.User;
 
 import java.util.Optional;
 
