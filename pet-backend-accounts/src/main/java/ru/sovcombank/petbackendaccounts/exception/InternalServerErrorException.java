@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendusers.exception;
+package ru.sovcombank.petbackendaccounts.exception;
 
 public class InternalServerErrorException extends RuntimeException {
 
