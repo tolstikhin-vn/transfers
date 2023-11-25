@@ -13,3 +13,6 @@ spring:
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: db/changelog/db.changelog-master.yml
+
+user-service:
+  url: http://localhost:8081
