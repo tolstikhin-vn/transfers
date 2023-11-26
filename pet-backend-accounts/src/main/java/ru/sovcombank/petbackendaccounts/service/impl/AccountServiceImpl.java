@@ -2,8 +2,10 @@ package ru.sovcombank.petbackendaccounts.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import ru.sovcombank.petbackendaccounts.mapping.impl.AccountToAccountDTO;
+import ru.sovcombank.petbackendaccounts.client.UserServiceClient;
+import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
+import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
+import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
 import ru.sovcombank.petbackendaccounts.mapping.impl.CreateAccountRequestToAccount;
 import ru.sovcombank.petbackendaccounts.mapping.impl.ListAccountToGetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.request.CreateAccountRequest;
@@ -13,12 +15,9 @@ import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
+import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
 import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
-import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
-import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
-import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
-import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
 import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
 
@@ -35,17 +34,17 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final ListAccountToGetAccountsResponse listAccountToGetAccountsResponse;
     private final CreateAccountRequestToAccount createAccountRequestToAccount;
-    private final RestTemplate restTemplate;
+    private final UserServiceClient userServiceClient;
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
     public AccountServiceImpl(AccountRepository accountRepository,
-                              RestTemplate restTemplate,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
-                              CreateAccountRequestToAccount createAccountRequestToAccount) {
+                              CreateAccountRequestToAccount createAccountRequestToAccount,
+                              UserServiceClient userServiceClient) {
         this.accountRepository = accountRepository;
-        this.restTemplate = restTemplate;
         this.listAccountToGetAccountsResponse = listAccountToGetAccountsResponse;
         this.createAccountRequestToAccount = createAccountRequestToAccount;
+        this.userServiceClient = userServiceClient;
     }
 
     /**
@@ -60,15 +59,9 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(rollbackFor = Exception.class)
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
-        // Отправляем запрос для поиска клиента по id
         Integer clientId = Integer.parseInt(createAccountRequest.getClientId());
-        String getUserByIdUrl = "http://pet-backend-users:8081/users/" + clientId;
-
-        try {
-            restTemplate.getForObject(getUserByIdUrl, Object.class);
-        } catch (Exception ex) {
-            throw new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage());
-        }
+        // Проверка существования клиента с таким clientId
+        userServiceClient.checkUserExists(clientId);
 
         // Проверка на лимит (2) кол-ва счетов в одной валюте для одного клиента
         if (!hasMaxAccountsForCurrency(clientId, createAccountRequest.getCur())) {
@@ -104,13 +97,8 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public GetAccountsResponse getAccounts(String clientId) {
-        // Отправляем запрос для поиска клиента по id
-        String getUserByIdUrl = "http://pet-backend-users:8081/users/" + clientId;
-        try {
-            restTemplate.getForObject(getUserByIdUrl, Object.class);
-        } catch (Exception ex) {
-            throw new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage());
-        }
+        // Проверка существования клиента с таким clientId
+        userServiceClient.checkUserExists(Integer.parseInt(clientId));
 
         List<Account> accounts = accountRepository.findByClientId(Integer.parseInt(clientId))
                 .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));

@@ -15,4 +15,4 @@ spring:
     change-log: db/changelog/db.changelog-master.yml
 
 user-service:
-  url: http://localhost:8081
+  url: http://pet-backend-users:8081
