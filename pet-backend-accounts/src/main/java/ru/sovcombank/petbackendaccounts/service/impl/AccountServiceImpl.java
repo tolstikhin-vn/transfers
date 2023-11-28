@@ -1,22 +1,25 @@
-package ru.sovcombank.petbackendaccounts.service;
+package ru.sovcombank.petbackendaccounts.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import ru.sovcombank.petbackendaccounts.api.request.CreateAccountRequest;
-import ru.sovcombank.petbackendaccounts.api.request.UpdateBalanceRequest;
-import ru.sovcombank.petbackendaccounts.api.response.CreateAccountResponse;
-import ru.sovcombank.petbackendaccounts.api.response.DeleteAccountResponse;
-import ru.sovcombank.petbackendaccounts.api.response.GetAccountsResponse;
-import ru.sovcombank.petbackendaccounts.api.response.GetBalanceResponse;
-import ru.sovcombank.petbackendaccounts.api.response.UpdateBalanceResponse;
-import ru.sovcombank.petbackendaccounts.enums.TypePaymentsEnum;
+import org.springframework.transaction.annotation.Transactional;
+import ru.sovcombank.petbackendaccounts.client.UserServiceClient;
 import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
 import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
-import ru.sovcombank.petbackendaccounts.mapper.AccountMapper;
-import ru.sovcombank.petbackendaccounts.model.Account;
+import ru.sovcombank.petbackendaccounts.mapping.impl.CreateAccountRequestToAccount;
+import ru.sovcombank.petbackendaccounts.mapping.impl.ListAccountToGetAccountsResponse;
+import ru.sovcombank.petbackendaccounts.model.api.request.CreateAccountRequest;
+import ru.sovcombank.petbackendaccounts.model.api.request.UpdateBalanceRequest;
+import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
+import ru.sovcombank.petbackendaccounts.model.entity.Account;
+import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
+import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
+import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,25 +32,19 @@ import java.util.Random;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
-    private final AccountMapper accountMapper;
-    private final RestTemplate restTemplate;
-    private static final String ACCOUNT_CREATED_SUCCESSFULLY_MESSAGE = "Счет успешно создан";
-    private static final String BAD_REQUEST_FOR_CUR_MESSAGE = "Некорректный запрос по полю cur";
-    private static final String BAD_REQUEST_FOR_TYPE_PAY_MESSAGE = "Некорректный запрос по полю typePayments";
-    private static final String BAD_REQUEST_FOR_AMOUNT_MESSAGE = "Некорректный запрос по полю amount";
-    private static final String USER_NOT_FOUND_MESSAGE = "Не найден клиент по запросу";
-    private static final String ACCOUNT_NOT_FOUND_MESSAGE = "Не найден счет по запросу";
-    private static final String ACCOUNT_DELETED_SUCCESSFULLY_MESSAGE = "Счет успешно закрыт";
-    private static final String BALANCE_UPDATED_SUCCESSFULLY_MESSAGE = "Баланс успешно обновлен";
+    private final ListAccountToGetAccountsResponse listAccountToGetAccountsResponse;
+    private final CreateAccountRequestToAccount createAccountRequestToAccount;
+    private final UserServiceClient userServiceClient;
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
-    @Autowired
     public AccountServiceImpl(AccountRepository accountRepository,
-                              AccountMapper accountMapper,
-                              RestTemplate restTemplate) {
+                              ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
+                              CreateAccountRequestToAccount createAccountRequestToAccount,
+                              UserServiceClient userServiceClient) {
         this.accountRepository = accountRepository;
-        this.accountMapper = accountMapper;
-        this.restTemplate = restTemplate;
+        this.listAccountToGetAccountsResponse = listAccountToGetAccountsResponse;
+        this.createAccountRequestToAccount = createAccountRequestToAccount;
+        this.userServiceClient = userServiceClient;
     }
 
     /**
@@ -59,23 +56,18 @@ public class AccountServiceImpl implements AccountService {
      * @throws BadRequestException   если достигнуто максимальное количество счетов для указанной валюты.
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
-        // Отправляем запрос для поиска клиента по id
         Integer clientId = Integer.parseInt(createAccountRequest.getClientId());
-        String getUserByIdUrl = "http://pet-backend-users:8081/users/" + clientId;
-
-        try {
-            restTemplate.getForObject(getUserByIdUrl, Object.class);
-        } catch (Exception ex) {
-            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
-        }
+        // Проверка существования клиента с таким clientId
+        userServiceClient.checkUserExists(clientId);
 
         // Проверка на лимит (2) кол-ва счетов в одной валюте для одного клиента
         if (!hasMaxAccountsForCurrency(clientId, createAccountRequest.getCur())) {
             String accountNumber = generateAccountNumber(createAccountRequest.getCur());
 
-            Account accountEntity = accountMapper.toEntity(createAccountRequest);
+            Account accountEntity = createAccountRequestToAccount.map(createAccountRequest);
             accountEntity.setAccountNumber(accountNumber);
             accountEntity.setId(null);
 
@@ -85,9 +77,14 @@ public class AccountServiceImpl implements AccountService {
             }
 
             Account createdAccount = accountRepository.save(accountEntity);
-            return new CreateAccountResponse(createdAccount.getAccountNumber(), ACCOUNT_CREATED_SUCCESSFULLY_MESSAGE);
+
+            CreateAccountResponse createAccountResponse = new CreateAccountResponse();
+            createAccountResponse.setAccountNumber(createdAccount.getAccountNumber());
+            createAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
+
+            return createAccountResponse;
         } else {
-            throw new BadRequestException(BAD_REQUEST_FOR_CUR_MESSAGE);
+            throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage());
         }
     }
 
@@ -100,18 +97,15 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public GetAccountsResponse getAccounts(String clientId) {
-        // Отправляем запрос для поиска клиента по id
-        String getUserByIdUrl = "http://pet-backend-users:8081/users/" + clientId;
-        try {
-            restTemplate.getForObject(getUserByIdUrl, Object.class);
-        } catch (Exception ex) {
-            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
-        }
+        // Проверка существования клиента с таким clientId
+        userServiceClient.checkUserExists(Integer.parseInt(clientId));
 
         List<Account> accounts = accountRepository.findByClientId(Integer.parseInt(clientId))
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));
 
-        return accountMapper.toGetAccountsResponse(accounts, clientId);
+        listAccountToGetAccountsResponse.setClientId(clientId);
+
+        return listAccountToGetAccountsResponse.map(accounts);
     }
 
     /**
@@ -122,6 +116,7 @@ public class AccountServiceImpl implements AccountService {
      * @throws AccountNotFoundException В случае, если счет не найден.
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public DeleteAccountResponse deleteAccount(String accountNumber) {
         // Проверяем существование клиента по переданному идентификатору
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
@@ -129,9 +124,13 @@ public class AccountServiceImpl implements AccountService {
             Account account = accountOptional.get();
             account.setClosed(true);
             accountRepository.save(account);
-            return new DeleteAccountResponse(ACCOUNT_DELETED_SUCCESSFULLY_MESSAGE);
+
+            DeleteAccountResponse deleteAccountResponse = new DeleteAccountResponse();
+            deleteAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_DELETED_SUCCESSFULLY.getMessage());
+
+            return deleteAccountResponse;
         } else {
-            throw new AccountNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);
+            throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
     }
 
@@ -146,9 +145,13 @@ public class AccountServiceImpl implements AccountService {
     public GetBalanceResponse getBalance(String accountNumber) {
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
         if (accountOptional.isPresent()) {
-            return new GetBalanceResponse(accountOptional.get().getBalance());
+
+            GetBalanceResponse getBalanceResponse = new GetBalanceResponse();
+            getBalanceResponse.setBalance(accountOptional.get().getBalance());
+
+            return getBalanceResponse;
         } else {
-            throw new AccountNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);
+            throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
     }
 
@@ -161,21 +164,26 @@ public class AccountServiceImpl implements AccountService {
      * @throws UserNotFoundException В случае, если счет не найден.
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UpdateBalanceResponse updateBalance(String accountNumber, UpdateBalanceRequest updateBalanceRequest) {
         // Проверяем существование клиента по переданному идентификатору
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
         if (accountOptional.isPresent()) {
             Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
             accountRepository.save(changedAccount);
-            return new UpdateBalanceResponse(BALANCE_UPDATED_SUCCESSFULLY_MESSAGE);
+
+            UpdateBalanceResponse updateBalanceResponse = new UpdateBalanceResponse();
+            updateBalanceResponse.setMessage(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+
+            return updateBalanceResponse;
         } else {
-            throw new AccountNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);
+            throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
     }
 
     // Генерирует уникальный номер счета на основе валюты.
     private String generateAccountNumber(String cur) {
-        return "4200" + cur + "666" + String.format("%06d", new Random().nextInt(1000000));
+        return String.format("4200%s666%06d", cur, new Random().nextInt(1000000));
     }
 
     // Проверяет, достигнуто ли максимальное количество счетов для указанной валюты у данного клиента.
@@ -200,11 +208,11 @@ public class AccountServiceImpl implements AccountService {
         } else if (typePayment.equals(TypePaymentsEnum.DEBITING.getTypePayment())) {
             // Проверка на наличие достаточного количества средств для списания
             if (account.getBalance().compareTo(updateBalanceRequest.getAmount()) < 0) {
-                throw new BadRequestException(BAD_REQUEST_FOR_AMOUNT_MESSAGE);
+                throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
             }
             account.setBalance(account.getBalance().subtract(updateBalanceRequest.getAmount()));
         } else {
-            throw new BadRequestException(BAD_REQUEST_FOR_TYPE_PAY_MESSAGE);
+            throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_TYPE_PAY.getMessage());
         }
         return account;
     }

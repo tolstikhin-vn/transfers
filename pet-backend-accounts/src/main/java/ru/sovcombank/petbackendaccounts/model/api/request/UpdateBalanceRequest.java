@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendaccounts.api.request;
+package ru.sovcombank.petbackendaccounts.model.api.request;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
