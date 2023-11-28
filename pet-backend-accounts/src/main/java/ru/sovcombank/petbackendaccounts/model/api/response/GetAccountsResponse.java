@@ -1,15 +1,15 @@
-package ru.sovcombank.petbackendaccounts.api.response;
+package ru.sovcombank.petbackendaccounts.model.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.sovcombank.petbackendaccounts.dto.AccountDTO;
+import ru.sovcombank.petbackendaccounts.model.dto.AccountDTO;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class GetAccountsResponse {
 
     private String clientId;

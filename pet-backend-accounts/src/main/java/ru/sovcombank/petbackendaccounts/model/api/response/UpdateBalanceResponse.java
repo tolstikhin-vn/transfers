@@ -1,9 +1,11 @@
-package ru.sovcombank.petbackendaccounts.api.response;
+package ru.sovcombank.petbackendaccounts.model.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class UpdateBalanceResponse {
 

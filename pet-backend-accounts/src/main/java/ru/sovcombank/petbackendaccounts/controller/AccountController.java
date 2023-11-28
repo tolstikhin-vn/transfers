@@ -1,7 +1,6 @@
 package ru.sovcombank.petbackendaccounts.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +10,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sovcombank.petbackendaccounts.api.request.CreateAccountRequest;
-import ru.sovcombank.petbackendaccounts.api.request.UpdateBalanceRequest;
-import ru.sovcombank.petbackendaccounts.api.response.CreateAccountResponse;
-import ru.sovcombank.petbackendaccounts.api.response.DeleteAccountResponse;
-import ru.sovcombank.petbackendaccounts.api.response.GetAccountsResponse;
-import ru.sovcombank.petbackendaccounts.api.response.GetBalanceResponse;
-import ru.sovcombank.petbackendaccounts.api.response.UpdateBalanceResponse;
-import ru.sovcombank.petbackendaccounts.service.AccountService;
+import ru.sovcombank.petbackendaccounts.model.api.request.CreateAccountRequest;
+import ru.sovcombank.petbackendaccounts.model.api.request.UpdateBalanceRequest;
+import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
+import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
 
 /**
  * Контроллер для управления счетами.
@@ -29,7 +28,6 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @Autowired
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }

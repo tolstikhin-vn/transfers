@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendaccounts.enums;
+package ru.sovcombank.petbackendaccounts.model.enums;
 
 public enum TypePaymentsEnum {
 

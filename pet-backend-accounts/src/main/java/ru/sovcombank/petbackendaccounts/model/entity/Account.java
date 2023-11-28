@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendaccounts.model;
+package ru.sovcombank.petbackendaccounts.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
