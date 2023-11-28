@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendusers.api.request;
+package ru.sovcombank.petbackendusers.model.api.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -10,6 +10,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class UpdateUserRequest {
 
+    private Integer id;
     private String lastName;
     private String firstName;
     private String fatherName;
@@ -21,6 +22,5 @@ public class UpdateUserRequest {
     private String passportNumber;
     @Email
     private String email;
-
     private boolean isActive;
 }

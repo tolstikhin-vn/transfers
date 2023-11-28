@@ -2,7 +2,6 @@ package ru.sovcombank.petbackendusers.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +11,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sovcombank.petbackendusers.api.request.CreateUserRequest;
-import ru.sovcombank.petbackendusers.api.request.UpdateUserRequest;
-import ru.sovcombank.petbackendusers.api.response.CreateUserResponse;
-import ru.sovcombank.petbackendusers.api.response.DeleteUserResponse;
-import ru.sovcombank.petbackendusers.api.response.GetUserResponse;
-import ru.sovcombank.petbackendusers.api.response.UpdateUserResponse;
-import ru.sovcombank.petbackendusers.service.UserService;
+import ru.sovcombank.petbackendusers.model.api.request.CreateUserRequest;
+import ru.sovcombank.petbackendusers.model.api.request.UpdateUserRequest;
+import ru.sovcombank.petbackendusers.model.api.response.CreateUserResponse;
+import ru.sovcombank.petbackendusers.model.api.response.DeleteUserResponse;
+import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
+import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
+import ru.sovcombank.petbackendusers.service.builder.UserService;
 
 import java.util.Objects;
 
@@ -29,11 +28,10 @@ import java.util.Objects;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
-
     private static final String INVALID_REQUEST_BY_FIELD = "Некорректный запрос по полю ";
 
-    @Autowired
+    private final UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -48,7 +46,6 @@ public class UserController {
     public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest createUserRequest, BindingResult result) {
         if (result.hasErrors()) {
             String fieldName = Objects.requireNonNull(result.getFieldError()).getField();
-
             return ResponseEntity.badRequest().body(INVALID_REQUEST_BY_FIELD + fieldName);
         }
         CreateUserResponse response = userService.createUser(createUserRequest);

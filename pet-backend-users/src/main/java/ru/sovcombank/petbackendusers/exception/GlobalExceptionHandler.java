@@ -9,12 +9,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.sovcombank.petbackendusers.api.response.MessageErrorResponse;
+import ru.sovcombank.petbackendusers.model.api.response.MessageErrorResponse;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Глобальный обработчик исключений для управления ошибками в приложении.
@@ -55,9 +54,9 @@ public class GlobalExceptionHandler {
         List<String> invalidFields = ex.getBindingResult().getAllErrors()
                 .stream()
                 .map(error -> ((FieldError) error).getField())
-                .collect(Collectors.toList());
+                .toList();
 
-        String errorMessage = "Некорректный запрос по полю " + String.join(", ", invalidFields);
+        String errorMessage = String.format("Некорректный запрос по полю %s", String.join(", ", invalidFields));
 
         return new ResponseEntity<>(new MessageErrorResponse(errorMessage), HttpStatus.BAD_REQUEST);
     }
@@ -76,7 +75,7 @@ public class GlobalExceptionHandler {
         while (matcher.find()) {
             String field = matcher.group(1); // Поле
             String value = matcher.group(2); // Значение
-            errorMessage = value + " с таким " + field + " уже зарегистрирован";
+            errorMessage = String.format("%s с таким %s уже зарегистрирован", value, field);
         }
 
         return new ResponseEntity<>(new MessageErrorResponse(errorMessage), HttpStatus.CONFLICT);
