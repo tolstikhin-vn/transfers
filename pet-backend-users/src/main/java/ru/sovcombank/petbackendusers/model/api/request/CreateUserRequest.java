@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendusers.api.request;
+package ru.sovcombank.petbackendusers.model.api.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

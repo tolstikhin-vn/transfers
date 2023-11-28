@@ -1,21 +1,25 @@
-package ru.sovcombank.petbackendusers.service;
+package ru.sovcombank.petbackendusers.service.impl;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ru.sovcombank.petbackendusers.api.request.CreateUserRequest;
-import ru.sovcombank.petbackendusers.api.request.UpdateUserRequest;
-import ru.sovcombank.petbackendusers.api.response.CreateUserResponse;
-import ru.sovcombank.petbackendusers.api.response.DeleteUserResponse;
-import ru.sovcombank.petbackendusers.api.response.GetUserResponse;
-import ru.sovcombank.petbackendusers.api.response.UpdateUserResponse;
+import org.springframework.transaction.annotation.Transactional;
+import ru.sovcombank.petbackendusers.mapping.impl.CreateUserRequestToUser;
+import ru.sovcombank.petbackendusers.mapping.impl.UpdateUserRequestToUser;
+import ru.sovcombank.petbackendusers.mapping.impl.UserToGetUserResponse;
+import ru.sovcombank.petbackendusers.model.api.request.CreateUserRequest;
+import ru.sovcombank.petbackendusers.model.api.request.UpdateUserRequest;
+import ru.sovcombank.petbackendusers.model.api.response.CreateUserResponse;
+import ru.sovcombank.petbackendusers.model.api.response.DeleteUserResponse;
+import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
+import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
 import ru.sovcombank.petbackendusers.exception.ConflictException;
 import ru.sovcombank.petbackendusers.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendusers.exception.UserNotFoundException;
-import ru.sovcombank.petbackendusers.mapper.UserMapper;
-import ru.sovcombank.petbackendusers.model.User;
+import ru.sovcombank.petbackendusers.model.entity.User;
+import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
 import ru.sovcombank.petbackendusers.repository.UserRepository;
+import ru.sovcombank.petbackendusers.service.builder.UserService;
 
 import java.util.Optional;
 
@@ -26,17 +30,18 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final CreateUserRequestToUser createUserRequestToUser;
+    private final UpdateUserRequestToUser updateUserRequestToUser;
+    private final UserToGetUserResponse userToGetUserResponse;
 
-    private static final String USER_CREATED_SUCCESSFULLY_MESSAGE = "Пользователь успешно создан";
-    private static final String USER_UPDATED_SUCCESSFULLY_MESSAGE = "Пользователь успешно изменен";
-    private static final String USER_DELETED_SUCCESSFULLY_MESSAGE = "Пользователь успешно удален";
-    private static final String USER_NOT_FOUND_MESSAGE = "Не найден пользователь";
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository,
+                           CreateUserRequestToUser createUserRequestToUser,
+                           UpdateUserRequestToUser updateUserRequestToUser,
+                           UserToGetUserResponse userToGetUserResponse) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
+        this.createUserRequestToUser = createUserRequestToUser;
+        this.updateUserRequestToUser = updateUserRequestToUser;
+        this.userToGetUserResponse = userToGetUserResponse;
     }
 
     /**
@@ -47,10 +52,16 @@ public class UserServiceImpl implements UserService {
      * @throws InternalServerErrorException В случае ошибки при сохранении в базе данных.
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         try {
-            User createdUser = userRepository.save(userMapper.toEntity(createUserRequest));
-            return new CreateUserResponse(createdUser.getId().toString(), USER_CREATED_SUCCESSFULLY_MESSAGE);
+            User createdUser = userRepository.save(createUserRequestToUser.map(createUserRequest));
+
+            CreateUserResponse createUserResponse = new CreateUserResponse();
+
+            createUserResponse.setClientId(createdUser.getId().toString());
+            createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
+            return createUserResponse;
         } catch (DataIntegrityViolationException ex) {
             if (ex.getCause() instanceof ConstraintViolationException) {
                 throw new ConflictException(ex);
@@ -71,9 +82,9 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
         if (userOptional.isPresent()) {
-            return userMapper.toGetUserResponse(userOptional.get());
+            return userToGetUserResponse.map(userOptional.get());
         } else {
-            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
+            throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
         }
     }
 
@@ -88,9 +99,9 @@ public class UserServiceImpl implements UserService {
     public GetUserResponse getUserByPhoneNumber(String phoneNumber) {
         Optional<User> userOptional = userRepository.findByPhoneNumber(phoneNumber);
         if (userOptional.isPresent()) {
-            return userMapper.toGetUserResponse(userOptional.get());
+            return userToGetUserResponse.map(userOptional.get());
         } else {
-            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
+            throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
         }
     }
 
@@ -103,15 +114,21 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException        В случае, если пользователь не найден.
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UpdateUserResponse updateUser(String id, UpdateUserRequest updateUserRequest) {
         try {
             // Проверяем существование клиента по переданному идентификатору
             Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
             if (userOptional.isPresent()) {
-                userRepository.save(userMapper.toEntity(updateUserRequest, userOptional.get()));
-                return new UpdateUserResponse(USER_UPDATED_SUCCESSFULLY_MESSAGE);
+                updateUserRequest.setId(Integer.parseInt(id));
+                userRepository.save(updateUserRequestToUser.map(updateUserRequest));
+
+                UpdateUserResponse updateUserResponse = new UpdateUserResponse();
+
+                updateUserResponse.setMessage(UserMessagesEnum.USER_UPDATED_SUCCESSFULLY_MESSAGE.getMessage());
+                return updateUserResponse;
             } else {
-                throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
+                throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
             }
         } catch (DataIntegrityViolationException ex) {
             if (ex.getCause() instanceof ConstraintViolationException) {
@@ -129,6 +146,7 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException        В случае, если пользователь не найден.
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public DeleteUserResponse deleteUser(String id) {
         // Проверяем существование клиента по переданному идентификатору
         Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
@@ -136,9 +154,13 @@ public class UserServiceImpl implements UserService {
             User user = userOptional.get();
             user.setIsDeleted(true);
             userRepository.save(user);
-            return new DeleteUserResponse(USER_DELETED_SUCCESSFULLY_MESSAGE);
+
+            DeleteUserResponse deleteUserResponse = new DeleteUserResponse();
+            deleteUserResponse.setMessage(UserMessagesEnum.USER_DELETED_SUCCESSFULLY_MESSAGE.getMessage());
+
+            return deleteUserResponse;
         } else {
-            throw new UserNotFoundException(USER_NOT_FOUND_MESSAGE);
+            throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
         }
     }
 }
