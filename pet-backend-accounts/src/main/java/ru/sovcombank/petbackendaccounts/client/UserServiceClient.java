@@ -1,6 +1,7 @@
 package ru.sovcombank.petbackendaccounts.client;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
@@ -18,16 +19,13 @@ public class UserServiceClient {
     }
 
     // Проверка существования клиента с таким clientId
-    public void checkUserExists(Integer clientId) {
+    public ResponseEntity<Object> checkUserExists(String clientId) {
         String getUserByIdUrl = userServiceUrl + "/users/" + clientId;
 
-        System.out.println(getUserByIdUrl);
-
-        try {
-            restTemplate.getForObject(getUserByIdUrl, Object.class);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+        ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getUserByIdUrl, Object.class);
+        if (responseEntity.getStatusCode().isError()) {
             throw new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage());
         }
+        return responseEntity;
     }
 }

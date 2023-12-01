@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sovcombank.petbackendaccounts.client.UserServiceClient;
 import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
+import ru.sovcombank.petbackendaccounts.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
 import ru.sovcombank.petbackendaccounts.mapping.impl.CreateAccountRequestToAccount;
 import ru.sovcombank.petbackendaccounts.mapping.impl.ListAccountToGetAccountsResponse;
@@ -14,6 +15,7 @@ import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse
 import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.MessageResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
@@ -21,6 +23,7 @@ import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
 import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -56,10 +59,10 @@ public class AccountServiceImpl implements AccountService {
      * @throws BadRequestException   если достигнуто максимальное количество счетов для указанной валюты.
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
-        Integer clientId = Integer.parseInt(createAccountRequest.getClientId());
+        String clientId = createAccountRequest.getClientId();
         // Проверка существования клиента с таким clientId
         userServiceClient.checkUserExists(clientId);
 
@@ -78,11 +81,7 @@ public class AccountServiceImpl implements AccountService {
 
             Account createdAccount = accountRepository.save(accountEntity);
 
-            CreateAccountResponse createAccountResponse = new CreateAccountResponse();
-            createAccountResponse.setAccountNumber(createdAccount.getAccountNumber());
-            createAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
-
-            return createAccountResponse;
+            return buildCreateAccountResponse(createdAccount);
         } else {
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage());
         }
@@ -98,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public GetAccountsResponse getAccounts(String clientId) {
         // Проверка существования клиента с таким clientId
-        userServiceClient.checkUserExists(Integer.parseInt(clientId));
+        userServiceClient.checkUserExists(clientId);
 
         List<Account> accounts = accountRepository.findByClientId(Integer.parseInt(clientId))
                 .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));
@@ -116,7 +115,7 @@ public class AccountServiceImpl implements AccountService {
      * @throws AccountNotFoundException В случае, если счет не найден.
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public DeleteAccountResponse deleteAccount(String accountNumber) {
         // Проверяем существование клиента по переданному идентификатору
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
@@ -125,10 +124,7 @@ public class AccountServiceImpl implements AccountService {
             account.setClosed(true);
             accountRepository.save(account);
 
-            DeleteAccountResponse deleteAccountResponse = new DeleteAccountResponse();
-            deleteAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_DELETED_SUCCESSFULLY.getMessage());
-
-            return deleteAccountResponse;
+            return createResponse(AccountResponseMessagesEnum.ACCOUNT_DELETED_SUCCESSFULLY.getMessage(), DeleteAccountResponse.class);
         } else {
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
@@ -164,7 +160,7 @@ public class AccountServiceImpl implements AccountService {
      * @throws UserNotFoundException В случае, если счет не найден.
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public UpdateBalanceResponse updateBalance(String accountNumber, UpdateBalanceRequest updateBalanceRequest) {
         // Проверяем существование клиента по переданному идентификатору
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
@@ -172,10 +168,7 @@ public class AccountServiceImpl implements AccountService {
             Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
             accountRepository.save(changedAccount);
 
-            UpdateBalanceResponse updateBalanceResponse = new UpdateBalanceResponse();
-            updateBalanceResponse.setMessage(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
-
-            return updateBalanceResponse;
+            return createResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage(), UpdateBalanceResponse.class);
         } else {
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
@@ -187,14 +180,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // Проверяет, достигнуто ли максимальное количество счетов для указанной валюты у данного клиента.
-    private boolean hasMaxAccountsForCurrency(Integer clientId, String cur) {
-        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(clientId, cur);
+    private boolean hasMaxAccountsForCurrency(String clientId, String cur) {
+        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(Integer.valueOf(clientId), cur);
         return existingAccounts.size() >= MAX_ACCOUNTS_PER_CURRENCY;
     }
 
     // Проверяет, имеет ли клиент не менее одного счета.
-    private boolean hasMoreThenOneAccount(Integer clientId) {
-        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(clientId);
+    private boolean hasMoreThenOneAccount(String clientId) {
+        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(Integer.valueOf(clientId));
         return existingAccounts.filter(accounts -> accounts.size() >= 1).isPresent();
     }
 
@@ -215,5 +208,21 @@ public class AccountServiceImpl implements AccountService {
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_TYPE_PAY.getMessage());
         }
         return account;
+    }
+
+    private CreateAccountResponse buildCreateAccountResponse(Account createdAccount) {
+        CreateAccountResponse createAccountResponse = new CreateAccountResponse();
+        createAccountResponse.setAccountNumber(createdAccount.getAccountNumber());
+        createAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
+        return createAccountResponse;
+    }
+
+    private <T extends MessageResponse> T createResponse(String message, Class<T> responseType) {
+        try {
+            Constructor<T> constructor = responseType.getDeclaredConstructor(String.class);
+            return constructor.newInstance(message);
+        } catch (Exception ex) {
+            throw new InternalServerErrorException(ex);
+        }
     }
 }
