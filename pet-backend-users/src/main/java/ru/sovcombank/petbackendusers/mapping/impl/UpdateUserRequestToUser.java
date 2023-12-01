@@ -19,7 +19,7 @@ public class UpdateUserRequestToUser implements Mapper<UpdateUserRequest, User> 
     @Override
     public User map(UpdateUserRequest updateUserRequest) {
         User user = new User();
-        user.setId(user.getId());
+        user.setId(Integer.parseInt(updateUserRequest.getId()));
         Optional.ofNullable(updateUserRequest.getLastName()).ifPresent(user::setLastName);
         Optional.ofNullable(updateUserRequest.getFirstName()).ifPresent(user::setFirstName);
         Optional.ofNullable(updateUserRequest.getFatherName()).ifPresent(user::setFatherName);

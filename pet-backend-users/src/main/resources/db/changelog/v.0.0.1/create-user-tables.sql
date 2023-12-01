@@ -8,7 +8,7 @@ CREATE TABLE users
     birth_date       VARCHAR(10)        NOT NULL,
     passport_number  VARCHAR(10) UNIQUE NOT NULL,
     email            VARCHAR(255),
-    create_date_time TIMESTAMP,
-    is_active        BOOLEAN,
-    is_deleted       BOOLEAN DEFAULT false
+    create_date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_active        BOOLEAN   DEFAULT TRUE,
+    is_deleted       BOOLEAN   DEFAULT FALSE
 );

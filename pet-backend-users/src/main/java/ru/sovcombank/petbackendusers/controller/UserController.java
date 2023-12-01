@@ -1,7 +1,6 @@
 package ru.sovcombank.petbackendusers.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.validation.BindingResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,16 +18,12 @@ import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
 import ru.sovcombank.petbackendusers.service.builder.UserService;
 
-import java.util.Objects;
-
 /**
  * Контроллер для управления пользователями.
  */
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-    private static final String INVALID_REQUEST_BY_FIELD = "Некорректный запрос по полю ";
 
     private final UserService userService;
 
@@ -43,11 +38,7 @@ public class UserController {
      * @return Ответ с результатом создания клиента.
      */
     @PostMapping("/new")
-    public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest createUserRequest, BindingResult result) {
-        if (result.hasErrors()) {
-            String fieldName = Objects.requireNonNull(result.getFieldError()).getField();
-            return ResponseEntity.badRequest().body(INVALID_REQUEST_BY_FIELD + fieldName);
-        }
+    public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
         CreateUserResponse response = userService.createUser(createUserRequest);
         return ResponseEntity.ok(response);
     }
@@ -79,18 +70,12 @@ public class UserController {
     /**
      * Обрабатывает запрос на изменение данных по клиенту.
      *
-     * @param id Идентификатор клиента.
+     * @param id                Идентификатор клиента.
      * @param updateUserRequest Запрос на изменение данных по клиенту.
      * @return Ответ с результатом изменения данных по клиенту.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid @RequestBody UpdateUserRequest updateUserRequest, BindingResult result) {
-        if (result.hasErrors()) {
-            String fieldName = Objects.requireNonNull(result.getFieldError()).getField();
-
-            return ResponseEntity.badRequest().body(INVALID_REQUEST_BY_FIELD + fieldName);
-        }
-
+    public ResponseEntity<Object> updateUser(@PathVariable String id, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         UpdateUserResponse response = userService.updateUser(id, updateUserRequest);
         return ResponseEntity.ok(response);
     }
