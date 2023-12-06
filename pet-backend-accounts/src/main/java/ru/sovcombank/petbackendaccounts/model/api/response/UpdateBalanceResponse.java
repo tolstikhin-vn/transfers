@@ -1,8 +1,13 @@
 package ru.sovcombank.petbackendaccounts.model.api.response;
 
-public class UpdateBalanceResponse extends MessageResponse {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public UpdateBalanceResponse(String message) {
-        super(message);
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class UpdateBalanceResponse {
+
+    private String message;
 }

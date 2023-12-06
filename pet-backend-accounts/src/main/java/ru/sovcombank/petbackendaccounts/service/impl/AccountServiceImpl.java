@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sovcombank.petbackendaccounts.client.UserServiceClient;
 import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
-import ru.sovcombank.petbackendaccounts.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
 import ru.sovcombank.petbackendaccounts.mapping.impl.CreateAccountRequestToAccount;
 import ru.sovcombank.petbackendaccounts.mapping.impl.ListAccountToGetAccountsResponse;
@@ -15,7 +14,6 @@ import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse
 import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
-import ru.sovcombank.petbackendaccounts.model.api.response.MessageResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
@@ -23,7 +21,6 @@ import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
 import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -124,7 +121,7 @@ public class AccountServiceImpl implements AccountService {
             account.setClosed(true);
             accountRepository.save(account);
 
-            return createResponse(AccountResponseMessagesEnum.ACCOUNT_DELETED_SUCCESSFULLY.getMessage(), DeleteAccountResponse.class);
+            return new DeleteAccountResponse(AccountResponseMessagesEnum.ACCOUNT_DELETED_SUCCESSFULLY.getMessage());
         } else {
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
@@ -168,7 +165,7 @@ public class AccountServiceImpl implements AccountService {
             Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
             accountRepository.save(changedAccount);
 
-            return createResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage(), UpdateBalanceResponse.class);
+            return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
         } else {
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
@@ -215,14 +212,5 @@ public class AccountServiceImpl implements AccountService {
         createAccountResponse.setAccountNumber(createdAccount.getAccountNumber());
         createAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
         return createAccountResponse;
-    }
-
-    private <T extends MessageResponse> T createResponse(String message, Class<T> responseType) {
-        try {
-            Constructor<T> constructor = responseType.getDeclaredConstructor(String.class);
-            return constructor.newInstance(message);
-        } catch (Exception ex) {
-            throw new InternalServerErrorException(ex);
-        }
     }
 }

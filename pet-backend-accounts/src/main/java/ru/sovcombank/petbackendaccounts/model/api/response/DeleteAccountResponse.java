@@ -1,9 +1,13 @@
 package ru.sovcombank.petbackendaccounts.model.api.response;
 
-public class DeleteAccountResponse extends MessageResponse {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public DeleteAccountResponse(String message) {
-        super(message);
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class DeleteAccountResponse {
+
+    private String message;
 }
-
