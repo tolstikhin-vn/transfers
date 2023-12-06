@@ -15,14 +15,12 @@ import ru.sovcombank.petbackendusers.model.api.request.UpdateUserRequest;
 import ru.sovcombank.petbackendusers.model.api.response.CreateUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.DeleteUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
-import ru.sovcombank.petbackendusers.model.api.response.MessageResponse;
 import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
 import ru.sovcombank.petbackendusers.model.entity.User;
 import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
 import ru.sovcombank.petbackendusers.repository.UserRepository;
 import ru.sovcombank.petbackendusers.service.builder.UserService;
 
-import java.lang.reflect.Constructor;
 import java.util.Optional;
 
 /**
@@ -120,7 +118,7 @@ public class UserServiceImpl implements UserService {
                 updateUserRequest.setId(id);
                 userRepository.save(updateUserRequestToUser.map(updateUserRequest));
 
-                return createResponse(UserMessagesEnum.USER_UPDATED_SUCCESSFULLY_MESSAGE.getMessage(), UpdateUserResponse.class);
+                return new UpdateUserResponse(UserMessagesEnum.USER_UPDATED_SUCCESSFULLY_MESSAGE.getMessage());
             } else {
                 throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
             }
@@ -149,7 +147,7 @@ public class UserServiceImpl implements UserService {
             user.setIsDeleted(true);
             userRepository.save(user);
 
-            return createResponse(UserMessagesEnum.USER_DELETED_SUCCESSFULLY_MESSAGE.getMessage(), DeleteUserResponse.class);
+            return new DeleteUserResponse(UserMessagesEnum.USER_DELETED_SUCCESSFULLY_MESSAGE.getMessage());
         } else {
             throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
         }
@@ -160,14 +158,5 @@ public class UserServiceImpl implements UserService {
         createUserResponse.setClientId(userId.toString());
         createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
         return createUserResponse;
-    }
-
-    private <T extends MessageResponse> T createResponse(String message, Class<T> responseType) {
-        try {
-            Constructor<T> constructor = responseType.getDeclaredConstructor(String.class);
-            return constructor.newInstance(message);
-        } catch (Exception ex) {
-            throw new InternalServerErrorException(ex);
-        }
     }
 }

@@ -1,8 +1,14 @@
 package ru.sovcombank.petbackendusers.model.api.response;
 
-public class DeleteUserResponse extends MessageResponse {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public DeleteUserResponse(String message) {
-        super(message);
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class DeleteUserResponse {
+
+    private String message;
 }
+
