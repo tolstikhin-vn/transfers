@@ -89,9 +89,9 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Создание счета: успешный сценарий")
-    void createAccount_Successfully() throws IOException {
+    void createAccountSuccessfully() throws IOException {
         CreateAccountRequest createAccountRequest = readFromJson(
-                "test-create-account-data.json",
+                "request/create-account-request.json",
                 CreateAccountRequest.class);
 
         when(userServiceClient.checkUserExists(createAccountRequest.getClientId())).thenReturn(ResponseEntity.ok().build());
@@ -110,9 +110,9 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Создание счета: ошибка BadRequestException")
-    void createAccount_BadRequestException() throws IOException {
+    void createAccountBadRequestException() throws IOException {
         CreateAccountRequest createAccountRequest = readFromJson(
-                "test-create-account-data.json",
+                "request/create-account-request.json",
                 CreateAccountRequest.class);
 
         accountService.createAccount(createAccountRequest);
@@ -133,9 +133,9 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Получение информации о счете: успешный сценарий")
-    void getAccountsByClientId_Successfully() throws IOException {
+    void getAccountsByClientIdSuccessfully() throws IOException {
         CreateAccountRequest createAccountRequest = readFromJson(
-                "test-create-account-data.json",
+                "request/create-account-request.json",
                 CreateAccountRequest.class);
 
         when(userServiceClient.checkUserExists(createAccountRequest.getClientId())).thenReturn(ResponseEntity.ok().build());
@@ -159,9 +159,9 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Удаление счета: успешный сценарий")
-    void deleteAccount_Successfully() throws IOException {
+    void deleteAccountSuccessfully() throws IOException {
         CreateAccountRequest createAccountRequest = readFromJson(
-                "test-create-account-data.json",
+                "request/create-account-request.json",
                 CreateAccountRequest.class);
 
         CreateAccountResponse createAccountResponse = accountService.createAccount(createAccountRequest);
@@ -180,7 +180,7 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Удаление счета: ошибка AccountNotFoundException")
-    void deleteAccount_AccountNotFoundException() {
+    void deleteAccountAccountNotFoundException() {
         ResponseEntity<DeleteAccountResponse> responseEntity = restTemplate.exchange(
                 BASE_HOST + port + "/accounts/77777777777777",
                 HttpMethod.DELETE,
@@ -195,9 +195,9 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Получение баланса: успешный сценарий")
-    void getBalance_Successfully() throws IOException {
+    void getBalanceSuccessfully() throws IOException {
         CreateAccountRequest createAccountRequest = readFromJson(
-                "test-create-account-data.json",
+                "request/create-account-request.json",
                 CreateAccountRequest.class);
 
         CreateAccountResponse createAccountResponse = accountService.createAccount(createAccountRequest);
@@ -212,7 +212,7 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Получение баланса: ошибка AccountNotFoundException")
-    void getBalance_AccountNotFoundException() {
+    void getBalanceAccountNotFoundException() {
         ResponseEntity<MessageResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/accounts/balance/77777777777777",
                 MessageResponse.class);
@@ -225,15 +225,15 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Изменение баланса: успешный сценарий")
-    void updateBalance_Successfully() throws IOException {
+    void updateBalanceSuccessfully() throws IOException {
         CreateAccountRequest createAccountRequest = readFromJson(
-                "test-create-account-data.json",
+                "request/create-account-request.json",
                 CreateAccountRequest.class);
 
         CreateAccountResponse createAccountResponse = accountService.createAccount(createAccountRequest);
 
         UpdateBalanceRequest updateBalanceRequest = readFromJson(
-                "test-update-balance-data.json",
+                "request/update-balance-request.json",
                 UpdateBalanceRequest.class);
 
         ResponseEntity<UpdateBalanceResponse> responseEntity = restTemplate.exchange(
@@ -250,9 +250,9 @@ public class AccountControllerIntegrationTest {
 
     @Test
     @DisplayName("Изменение баланса: ошибка AccountNotFoundException")
-    void updateBalance_AccountNotFoundException() throws IOException {
+    void updateBalanceAccountNotFoundException() throws IOException {
         UpdateBalanceRequest updateBalanceRequest = readFromJson(
-                "test-update-balance-data.json",
+                "request/update-balance-request.json",
                 UpdateBalanceRequest.class);
 
         ResponseEntity<MessageResponse> responseEntity = restTemplate.exchange(
