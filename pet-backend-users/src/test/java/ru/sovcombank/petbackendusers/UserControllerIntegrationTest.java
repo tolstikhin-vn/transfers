@@ -81,9 +81,9 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Создание пользователя: успешный сценарий")
-    void createUser_Successfully() throws IOException {
+    void createUserSuccessfully() throws IOException {
         CreateUserRequest createUserRequest = readFromJson(
-                "test-create-user-data.json",
+                "request/create-user-request.json",
                 CreateUserRequest.class);
 
         ResponseEntity<CreateUserResponse> responseEntity = restTemplate.postForEntity(
@@ -99,9 +99,9 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Создание пользователя: ошибка ConflictException")
-    void createUser_ConflictException() throws IOException {
+    void createUserConflictException() throws IOException {
         CreateUserRequest createUserRequest = readFromJson(
-                "test-create-user-data.json",
+                "request/create-user-request.json",
                 CreateUserRequest.class);
 
         userService.createUser(createUserRequest);
@@ -118,9 +118,9 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Получение информации о клиенте по id: успешный сценарий")
-    void getUserById_Successfully() throws IOException {
+    void getUserByIdSuccessfully() throws IOException {
         CreateUserRequest createUserRequest = readFromJson(
-                "test-create-user-data.json",
+                "request/create-user-request.json",
                 CreateUserRequest.class);
 
         userService.createUser(createUserRequest);
@@ -145,7 +145,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Получение информации о клиенте по id: ошибка UserNotFoundException")
-    void getUserById_UserNotFoundException() {
+    void getUserByIdUserNotFoundException() {
         ResponseEntity<MessageResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/users/999",
                 MessageResponse.class);
@@ -157,9 +157,9 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Получение информации о клиенте по номеру телефона: успешный сценарий")
-    void getUserByPhoneNumber_Successfully() throws IOException {
+    void getUserByPhoneNumberSuccessfully() throws IOException {
         CreateUserRequest createUserRequest = readFromJson(
-                "test-create-user-data.json",
+                "request/create-user-request.json",
                 CreateUserRequest.class);
 
         userService.createUser(createUserRequest);
@@ -184,7 +184,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Получение информации о клиенте по номеру телефона: ошибка UserNotFoundException")
-    void getUserByPhoneNumber_UserNotFoundException() {
+    void getUserByPhoneNumberUserNotFoundException() {
         ResponseEntity<MessageResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/users/phone-number/70000000000",
                 MessageResponse.class);
@@ -196,15 +196,15 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Изменение данных клиента: успешный сценарий")
-    void updateUser_Successfully() throws IOException {
+    void updateUserSuccessfully() throws IOException {
         CreateUserRequest createUserRequest = readFromJson(
-                "test-create-user-data.json",
+                "request/create-user-request.json",
                 CreateUserRequest.class);
 
         CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
 
         UpdateUserRequest updateUserRequest = readFromJson(
-                "test-update-user-data.json",
+                "request/update-user-request.json",
                 UpdateUserRequest.class);
 
         ResponseEntity<UpdateUserResponse> responseEntity = restTemplate.exchange(
@@ -220,9 +220,9 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Изменение данных клиента: ошибка UserNotFoundException")
-    void updateUser_UserNotFoundException() throws IOException {
+    void updateUserUserNotFoundException() throws IOException {
         UpdateUserRequest updateUserRequest = readFromJson(
-                "test-update-user-data.json",
+                "request/update-user-request.json",
                 UpdateUserRequest.class);
 
         ResponseEntity<UpdateUserResponse> responseEntity = restTemplate.exchange(
@@ -238,9 +238,9 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Удаление клиента: успешный сценарий")
-    void deleteUser_Successfully() throws IOException {
+    void deleteUserSuccessfully() throws IOException {
         CreateUserRequest createUserRequest = readFromJson(
-                "test-create-user-data.json",
+                "request/create-user-request.json",
                 CreateUserRequest.class);
 
         CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
@@ -258,7 +258,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     @DisplayName("Удаление клиента: ошибка UserNotFoundException")
-    void deleteUser_UserNotFoundException() {
+    void deleteUserUserNotFoundException() {
         ResponseEntity<DeleteUserResponse> responseEntity = restTemplate.exchange(
                 BASE_HOST + port + "/users/1",
                 HttpMethod.DELETE,
