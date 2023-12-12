@@ -6,12 +6,14 @@ import ru.sovcombank.petbackendaccounts.client.UserServiceClient;
 import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
 import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
+import ru.sovcombank.petbackendaccounts.mapping.impl.AccountToGetAccountResponse;
 import ru.sovcombank.petbackendaccounts.mapping.impl.CreateAccountRequestToAccount;
 import ru.sovcombank.petbackendaccounts.mapping.impl.ListAccountToGetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.request.CreateAccountRequest;
 import ru.sovcombank.petbackendaccounts.model.api.request.UpdateBalanceRequest;
 import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
@@ -34,16 +36,20 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final ListAccountToGetAccountsResponse listAccountToGetAccountsResponse;
     private final CreateAccountRequestToAccount createAccountRequestToAccount;
+
+    private final AccountToGetAccountResponse accountToGetAccountResponse;
     private final UserServiceClient userServiceClient;
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
                               CreateAccountRequestToAccount createAccountRequestToAccount,
+                              AccountToGetAccountResponse accountToGetAccountResponse,
                               UserServiceClient userServiceClient) {
         this.accountRepository = accountRepository;
         this.listAccountToGetAccountsResponse = listAccountToGetAccountsResponse;
         this.createAccountRequestToAccount = createAccountRequestToAccount;
+        this.accountToGetAccountResponse = accountToGetAccountResponse;
         this.userServiceClient = userServiceClient;
     }
 
@@ -102,6 +108,14 @@ public class AccountServiceImpl implements AccountService {
         listAccountToGetAccountsResponse.setClientId(clientId);
 
         return listAccountToGetAccountsResponse.map(accounts);
+    }
+
+    @Override
+    public GetAccountResponse getAccountInfo(String accountNumber) {
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage()));
+
+        return accountToGetAccountResponse.map(account);
     }
 
     /**

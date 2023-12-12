@@ -7,13 +7,17 @@ import org.springframework.web.client.RestTemplate;
 import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
 
+/**
+ * Клиент для отправки запросов в микросервис users.
+ */
 @Component
 public class UserServiceClient {
 
     private final RestTemplate restTemplate;
     private final String userServiceUrl;
 
-    public UserServiceClient(RestTemplate restTemplate, @Value("${user-service.url}") String userServiceUrl) {
+    public UserServiceClient(RestTemplate restTemplate,
+                             @Value("${user-service.url}") String userServiceUrl) {
         this.restTemplate = restTemplate;
         this.userServiceUrl = userServiceUrl;
     }

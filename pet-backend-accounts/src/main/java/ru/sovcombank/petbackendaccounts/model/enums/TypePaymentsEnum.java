@@ -7,7 +7,7 @@ public enum TypePaymentsEnum {
 
     private final String typePayment;
 
-    private TypePaymentsEnum(String typePayment) {
+    TypePaymentsEnum(String typePayment) {
         this.typePayment = typePayment;
     }
 

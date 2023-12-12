@@ -26,3 +26,19 @@ services:
       - "8082:8082"
     depends_on:
       - postgres
+
+  pet-backend-transfers:
+    build:
+      context: ./pet-backend-transfers
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+
+  pet-backend-history:
+    build:
+      context: ./pet-backend-history
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres
