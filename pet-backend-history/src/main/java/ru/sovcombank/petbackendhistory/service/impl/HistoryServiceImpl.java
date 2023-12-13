@@ -13,6 +13,9 @@ import ru.sovcombank.petbackendhistory.service.builder.HistoryService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Сервис для операций с историей транзакций.
+ */
 @Service
 public class HistoryServiceImpl implements HistoryService {
 
@@ -40,6 +43,12 @@ public class HistoryServiceImpl implements HistoryService {
         return listTransferToGetHistoryTransferResponse.map(transferHistory);
     }
 
+    /**
+     * Получает историю транзакций для указанного клиента.
+     *
+     * @param clientId Идентификатор клиента.
+     * @return Ответ с историей транзакций.
+     */
     private List<String> getAccountNumbersList(String clientId) {
         GetAccountsResponse getAccountsResponse = accountServiceClient.getAccountsResponse(clientId);
         List<String> accountNumbersList = new ArrayList<>();
