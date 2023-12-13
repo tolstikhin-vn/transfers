@@ -1,0 +1,25 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: pet-backend-history
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://postgres:5432/transfers_db?createDatabaseIfNotExist=true
+    username: vrtn_user
+    password: vrtn_password
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: db/changelog/db.changelog-master.yml
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: history-group
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+account-service:
+  url: http://pet-backend-accounts:8082
