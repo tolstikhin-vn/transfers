@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.sovcombank.petbackendtransfers.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendtransfers.exception.InternalServerErrorException;
+import ru.sovcombank.petbackendtransfers.exception.UserNotFoundException;
 import ru.sovcombank.petbackendtransfers.mapping.impl.ResponseToGetAccountResponse;
 import ru.sovcombank.petbackendtransfers.mapping.impl.ResponseToGetAccountsResponse;
 import ru.sovcombank.petbackendtransfers.mapping.impl.ResponseToGetBalanceResponse;
@@ -26,7 +27,9 @@ public class AccountServiceClient {
     private final RestTemplate restTemplate;
 
     private final ResponseToGetAccountResponse responseToGetAccountResponse;
+
     private final ResponseToGetAccountsResponse responseToGetAccountsResponse;
+
     private final ResponseToGetBalanceResponse responseToGetBalanceResponse;
 
     private final String accountServiceUrl;
@@ -88,7 +91,7 @@ public class AccountServiceClient {
      *
      * @param clientId Идентификатор клиента.
      * @return Объект GetAccountsResponse с информацией о счетах клиента.
-     * @throws AccountNotFoundException Если клиент не найден, выбрасывается исключение.
+     * @throws UserNotFoundException Если клиент не найден, выбрасывается исключение.
      */
     public GetAccountsResponse getAccountsResponse(String clientId) {
         String getAccountsUrl = accountServiceUrl + "/accounts/" + clientId;
@@ -97,7 +100,7 @@ public class AccountServiceClient {
         if (!responseEntity.getStatusCode().isError()) {
             return responseToGetAccountsResponse.map(responseEntity);
         }
-        throw new AccountNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
+        throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
     }
 
     /**
