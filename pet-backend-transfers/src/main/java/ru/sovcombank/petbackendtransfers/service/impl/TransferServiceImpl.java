@@ -1,6 +1,7 @@
 package ru.sovcombank.petbackendtransfers.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.client.AccountServiceClient;
 import ru.sovcombank.petbackendtransfers.client.UserServiceClient;
@@ -46,6 +47,7 @@ public class TransferServiceImpl implements TransferService {
     private final MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest;
     private final MapToMakeTransferByPhoneRequest mapToMakeTransferByPhoneRequest;
     private final TransferToGetTransferResponse transferToGetTransferResponse;
+    private final KafkaTemplate<String, Transfer> kafkaTemplate;
 
     public TransferServiceImpl(
             TransferRepository transferRepository,
@@ -54,7 +56,8 @@ public class TransferServiceImpl implements TransferService {
             CurrencyConverter currencyConverter,
             MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest,
             MapToMakeTransferByPhoneRequest mapToMakeTransferByPhoneRequest,
-            TransferToGetTransferResponse transferToGetTransferResponse
+            TransferToGetTransferResponse transferToGetTransferResponse,
+            KafkaTemplate<String, Transfer> kafkaTemplate
     ) {
         this.transferRepository = transferRepository;
         this.userServiceClient = userServiceClient;
@@ -63,6 +66,7 @@ public class TransferServiceImpl implements TransferService {
         this.mapToMakeTransferByAccountRequest = mapToMakeTransferByAccountRequest;
         this.mapToMakeTransferByPhoneRequest = mapToMakeTransferByPhoneRequest;
         this.transferToGetTransferResponse = transferToGetTransferResponse;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     /**
@@ -98,6 +102,11 @@ public class TransferServiceImpl implements TransferService {
      */
     @Transactional
     private MakeTransferResponse makeTransferByAccount(MakeTransferByAccountRequest makeTransferByAccountRequest) {
+        checkRepeatNumbers(
+                makeTransferByAccountRequest.getAccountNumberFrom(),
+                makeTransferByAccountRequest.getAccountNumberTo(),
+                TransferResponseMessagesEnum.BAD_REQUEST_FOR_ACCOUNT_NUMBER.getMessage());
+
         String clientIdFrom = makeTransferByAccountRequest.getClientId();
         validateUserForTransferByAccount(clientIdFrom);
 
@@ -146,6 +155,8 @@ public class TransferServiceImpl implements TransferService {
 
         saveTransfer(transfer);
 
+        kafkaTemplate.send("transfers-history-transaction", transfer);
+
         return createMakeTransferResponse(accountServiceClient.getBalanceResponse(accountNumberFrom).getBalance());
     }
 
@@ -157,6 +168,11 @@ public class TransferServiceImpl implements TransferService {
      */
     @Transactional
     private MakeTransferResponse makeTransferByPhone(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        checkRepeatNumbers(
+                makeTransferByPhoneRequest.getPhoneNumberFrom(),
+                makeTransferByPhoneRequest.getPhoneNumberTo(),
+                TransferResponseMessagesEnum.BAD_REQUEST_FOR_ACCOUNT_NUMBER.getMessage());
+
         String clientIdFrom = makeTransferByPhoneRequest.getClientId();
         String phoneNumberFrom = makeTransferByPhoneRequest.getPhoneNumberFrom();
 
@@ -207,7 +223,17 @@ public class TransferServiceImpl implements TransferService {
         );
 
         saveTransfer(transfer);
+
+        kafkaTemplate.send("transfers-history-transaction", transfer);
+
         return createMakeTransferResponse(accountServiceClient.getBalanceResponse(mainAccountFrom).getBalance());
+    }
+
+    // Проверка на перевод самому себе
+    private void checkRepeatNumbers(String numberFrom, String numberTo, String message) {
+        if (numberTo.equals(numberFrom)) {
+            throw new BadRequestException(message);
+        }
     }
 
     // Валидация пользователя (проверка полей isActive и isDeleted)
