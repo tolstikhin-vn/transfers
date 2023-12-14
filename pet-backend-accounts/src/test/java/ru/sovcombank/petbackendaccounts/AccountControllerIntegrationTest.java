@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -62,6 +63,9 @@ public class AccountControllerIntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private UserServiceClient userServiceClient;
 
@@ -102,6 +106,7 @@ public class AccountControllerIntegrationTest {
                 CreateAccountResponse.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertNotNull(Objects.requireNonNull(responseEntity.getBody()).getAccountNumber());
         assertEquals(AccountResponseMessagesEnum.ACCOUNT_CREATED_SUCCESSFULLY.getMessage(),
                 responseEntity.getBody().getMessage()
@@ -126,6 +131,7 @@ public class AccountControllerIntegrationTest {
                 CreateAccountResponse.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(AccountResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage()
         );
@@ -148,6 +154,7 @@ public class AccountControllerIntegrationTest {
 
         int actualAccountsListSize = Objects.requireNonNull(responseEntity.getBody()).getAccountNumbers().size();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(1, actualAccountsListSize);
 
         AccountDTO actualAccountDTO = responseEntity.getBody().getAccountNumbers().get(0);
@@ -173,6 +180,7 @@ public class AccountControllerIntegrationTest {
                 DeleteAccountResponse.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(AccountResponseMessagesEnum.ACCOUNT_DELETED_SUCCESSFULLY.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage()
         );
@@ -188,6 +196,7 @@ public class AccountControllerIntegrationTest {
                 DeleteAccountResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage()
         );
@@ -207,6 +216,7 @@ public class AccountControllerIntegrationTest {
                 GetBalanceResponse.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(new BigDecimal("0.00"), Objects.requireNonNull(responseEntity.getBody()).getBalance());
     }
 
@@ -218,6 +228,7 @@ public class AccountControllerIntegrationTest {
                 MessageResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage(),
                 Objects.requireNonNull(Objects.requireNonNull(responseEntity.getBody()).getMessage())
         );
@@ -243,6 +254,7 @@ public class AccountControllerIntegrationTest {
                 UpdateBalanceResponse.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage()
         );
@@ -262,13 +274,13 @@ public class AccountControllerIntegrationTest {
                 MessageResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage(),
                 Objects.requireNonNull(Objects.requireNonNull(responseEntity.getBody()).getMessage())
         );
     }
 
     private <T> T readFromJson(String jsonFileName, Class<T> requestClass) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("json/" + jsonFileName);
         return objectMapper.readValue(inputStream, requestClass);
     }
