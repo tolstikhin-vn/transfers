@@ -14,6 +14,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -34,9 +35,6 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -56,6 +54,9 @@ public class UserControllerIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @LocalServerPort
     private int port;
@@ -91,10 +92,15 @@ public class UserControllerIntegrationTest {
                 createUserRequest,
                 CreateUserResponse.class);
 
+        CreateUserResponse expectedResponse = readFromJson(
+                "response/create-user-response.json",
+                CreateUserResponse.class);
+
+        CreateUserResponse actualResponse = responseEntity.getBody();
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("1", Objects.requireNonNull(responseEntity.getBody()).getClientId());
-        assertEquals(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage(),
-                responseEntity.getBody().getMessage());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
+        assertEquals(expectedResponse, actualResponse);
     }
 
     @Test
@@ -112,6 +118,7 @@ public class UserControllerIntegrationTest {
                 MessageResponse.class);
 
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(createUserRequest.getPhoneNumber() + " с таким phone_number уже зарегистрирован",
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
@@ -129,18 +136,16 @@ public class UserControllerIntegrationTest {
                 BASE_HOST + port + "/users/1",
                 GetUserResponse.class);
 
+        GetUserResponse expectedResponse = readFromJson(
+                "response/get-user-response.json",
+                GetUserResponse.class);
+
+        GetUserResponse actualResponse = responseEntity.getBody();
+        actualResponse.setCreateDateTime(expectedResponse.getCreateDateTime());
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(1, Objects.requireNonNull(responseEntity.getBody()).getId());
-        assertEquals(createUserRequest.getLastName(), Objects.requireNonNull(responseEntity.getBody()).getLastName());
-        assertEquals(createUserRequest.getFirstName(), Objects.requireNonNull(responseEntity.getBody()).getFirstName());
-        assertEquals(createUserRequest.getFatherName(), Objects.requireNonNull(responseEntity.getBody()).getFatherName());
-        assertEquals(createUserRequest.getPhoneNumber(), Objects.requireNonNull(responseEntity.getBody()).getPhoneNumber());
-        assertEquals(createUserRequest.getBirthDate(), Objects.requireNonNull(responseEntity.getBody()).getBirthDate());
-        assertEquals(createUserRequest.getPassportNumber(), Objects.requireNonNull(responseEntity.getBody()).getPassportNumber());
-        assertEquals(createUserRequest.getEmail(), responseEntity.getBody().getEmail());
-        assertNotNull(responseEntity.getBody().getCreateDateTime());
-        assertTrue(responseEntity.getBody().isActive());
-        assertFalse(responseEntity.getBody().isDeleted());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
+        assertEquals(expectedResponse, actualResponse);
     }
 
     @Test
@@ -151,6 +156,7 @@ public class UserControllerIntegrationTest {
                 MessageResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
@@ -168,18 +174,16 @@ public class UserControllerIntegrationTest {
                 BASE_HOST + port + "/users/phone-number/" + createUserRequest.getPhoneNumber(),
                 GetUserResponse.class);
 
+        GetUserResponse expectedResponse = readFromJson(
+                "response/get-user-response.json",
+                GetUserResponse.class);
+
+        GetUserResponse actualResponse = responseEntity.getBody();
+        actualResponse.setCreateDateTime(expectedResponse.getCreateDateTime());
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(1, Objects.requireNonNull(responseEntity.getBody()).getId());
-        assertEquals(createUserRequest.getLastName(), Objects.requireNonNull(responseEntity.getBody()).getLastName());
-        assertEquals(createUserRequest.getFirstName(), Objects.requireNonNull(responseEntity.getBody()).getFirstName());
-        assertEquals(createUserRequest.getFatherName(), Objects.requireNonNull(responseEntity.getBody()).getFatherName());
-        assertEquals(createUserRequest.getPhoneNumber(), Objects.requireNonNull(responseEntity.getBody()).getPhoneNumber());
-        assertEquals(createUserRequest.getBirthDate(), Objects.requireNonNull(responseEntity.getBody()).getBirthDate());
-        assertEquals(createUserRequest.getPassportNumber(), Objects.requireNonNull(responseEntity.getBody()).getPassportNumber());
-        assertEquals(createUserRequest.getEmail(), responseEntity.getBody().getEmail());
-        assertNotNull(responseEntity.getBody().getCreateDateTime());
-        assertTrue(responseEntity.getBody().isActive());
-        assertFalse(responseEntity.getBody().isDeleted());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
+        assertEquals(expectedResponse, actualResponse);
     }
 
     @Test
@@ -190,6 +194,7 @@ public class UserControllerIntegrationTest {
                 MessageResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
@@ -214,6 +219,7 @@ public class UserControllerIntegrationTest {
                 UpdateUserResponse.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(UserMessagesEnum.USER_UPDATED_SUCCESSFULLY_MESSAGE.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
@@ -232,6 +238,7 @@ public class UserControllerIntegrationTest {
                 UpdateUserResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
@@ -252,6 +259,7 @@ public class UserControllerIntegrationTest {
                 DeleteUserResponse.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(UserMessagesEnum.USER_DELETED_SUCCESSFULLY_MESSAGE.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
@@ -266,12 +274,12 @@ public class UserControllerIntegrationTest {
                 DeleteUserResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage(),
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
 
     private <T> T readFromJson(String jsonFileName, Class<T> requestClass) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("json/" + jsonFileName);
         return objectMapper.readValue(inputStream, requestClass);
     }
