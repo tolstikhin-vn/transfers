@@ -53,9 +53,10 @@ public class HistoryServiceImpl implements HistoryService {
         GetAccountsResponse getAccountsResponse = accountServiceClient.getAccountsResponse(clientId);
         List<String> accountNumbersList = new ArrayList<>();
 
-        for (AccountDTO accountDTO : getAccountsResponse.getAccountNumbers()) {
+        for (AccountDTO accountDTO : getAccountsResponse.getAccountList()) {
             accountNumbersList.add(accountDTO.getAccountNumber());
         }
+
         return accountNumbersList;
     }
 }
