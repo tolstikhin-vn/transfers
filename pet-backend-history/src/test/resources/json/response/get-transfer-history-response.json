@@ -1,0 +1,12 @@
+{
+  "clientId": "1",
+  "transfers": [
+    {
+      "accountNumberFrom": "4200933666961739",
+      "accountNumberTo": "4200810666632677",
+      "amount": 1000.00,
+      "cur": "810",
+      "transactionDateTime": "2023-12-13T18:25:25"
+    }
+  ]
+}
