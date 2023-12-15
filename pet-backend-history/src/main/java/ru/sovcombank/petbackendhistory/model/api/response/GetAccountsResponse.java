@@ -14,5 +14,5 @@ public class GetAccountsResponse {
 
     private String clientId;
 
-    private List<AccountDTO> accountNumbers;
+    private List<AccountDTO> accountList;
 }
