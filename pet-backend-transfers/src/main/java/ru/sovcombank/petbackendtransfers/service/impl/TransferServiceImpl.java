@@ -183,6 +183,7 @@ public class TransferServiceImpl implements TransferService {
         GetAccountResponse getAccountResponseFrom = getAccountResponse(mainAccountFrom);
 
         validateAccountForTransfer(getAccountResponseFrom);
+
         validateCur(makeTransferByPhoneRequest.getCur(), getAccountResponseFrom.getCur());
 
         BigDecimal amountByCur = getAmountByCur(
@@ -287,7 +288,7 @@ public class TransferServiceImpl implements TransferService {
         return accountServiceClient.getAccountsResponse(clientId);
     }
 
-    //  // Получение ответа с информацией о счете
+    // Получение ответа с информацией о счете
     private GetAccountResponse getAccountResponse(String accountNumber) {
         return accountServiceClient.getAccountResponse(accountNumber);
     }
@@ -329,7 +330,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     // Сохранение перевода в базе данных
-    private void saveTransfer(Transfer transfer) {
+    public void saveTransfer(Transfer transfer) {
         transferRepository.save(transfer);
     }
 
