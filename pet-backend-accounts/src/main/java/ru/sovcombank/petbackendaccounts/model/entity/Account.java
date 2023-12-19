@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 @Entity(name = "accounts")
 public class Account {
 
@@ -32,7 +34,7 @@ public class Account {
     private String cur;
 
     @Column(nullable = false)
-    private BigDecimal balance = new BigDecimal(0);
+    private BigDecimal balance = new BigDecimal("0.00");
 
     @Column(nullable = false)
     private LocalDateTime createDateTime = LocalDateTime.now();
