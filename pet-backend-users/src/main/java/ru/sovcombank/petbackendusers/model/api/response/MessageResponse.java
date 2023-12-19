@@ -2,10 +2,12 @@ package ru.sovcombank.petbackendusers.model.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class MessageErrorResponse {
+@NoArgsConstructor
+public class MessageResponse {
 
     private String message;
 }

@@ -4,6 +4,9 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sovcombank.petbackendusers.exception.ConflictException;
+import ru.sovcombank.petbackendusers.exception.InternalServerErrorException;
+import ru.sovcombank.petbackendusers.exception.UserNotFoundException;
 import ru.sovcombank.petbackendusers.mapping.impl.CreateUserRequestToUser;
 import ru.sovcombank.petbackendusers.mapping.impl.UpdateUserRequestToUser;
 import ru.sovcombank.petbackendusers.mapping.impl.UserToGetUserResponse;
@@ -13,9 +16,6 @@ import ru.sovcombank.petbackendusers.model.api.response.CreateUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.DeleteUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
-import ru.sovcombank.petbackendusers.exception.ConflictException;
-import ru.sovcombank.petbackendusers.exception.InternalServerErrorException;
-import ru.sovcombank.petbackendusers.exception.UserNotFoundException;
 import ru.sovcombank.petbackendusers.model.entity.User;
 import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
 import ru.sovcombank.petbackendusers.repository.UserRepository;
@@ -52,16 +52,11 @@ public class UserServiceImpl implements UserService {
      * @throws InternalServerErrorException В случае ошибки при сохранении в базе данных.
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         try {
             User createdUser = userRepository.save(createUserRequestToUser.map(createUserRequest));
-
-            CreateUserResponse createUserResponse = new CreateUserResponse();
-
-            createUserResponse.setClientId(createdUser.getId().toString());
-            createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
-            return createUserResponse;
+            return buildCreateUserResponse(createdUser.getId());
         } catch (DataIntegrityViolationException ex) {
             if (ex.getCause() instanceof ConstraintViolationException) {
                 throw new ConflictException(ex);
@@ -114,19 +109,16 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException        В случае, если пользователь не найден.
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public UpdateUserResponse updateUser(String id, UpdateUserRequest updateUserRequest) {
         try {
             // Проверяем существование клиента по переданному идентификатору
             Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
             if (userOptional.isPresent()) {
-                updateUserRequest.setId(Integer.parseInt(id));
+                updateUserRequest.setId(id);
                 userRepository.save(updateUserRequestToUser.map(updateUserRequest));
 
-                UpdateUserResponse updateUserResponse = new UpdateUserResponse();
-
-                updateUserResponse.setMessage(UserMessagesEnum.USER_UPDATED_SUCCESSFULLY_MESSAGE.getMessage());
-                return updateUserResponse;
+                return new UpdateUserResponse(UserMessagesEnum.USER_UPDATED_SUCCESSFULLY_MESSAGE.getMessage());
             } else {
                 throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
             }
@@ -146,7 +138,7 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException        В случае, если пользователь не найден.
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public DeleteUserResponse deleteUser(String id) {
         // Проверяем существование клиента по переданному идентификатору
         Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
@@ -155,12 +147,16 @@ public class UserServiceImpl implements UserService {
             user.setIsDeleted(true);
             userRepository.save(user);
 
-            DeleteUserResponse deleteUserResponse = new DeleteUserResponse();
-            deleteUserResponse.setMessage(UserMessagesEnum.USER_DELETED_SUCCESSFULLY_MESSAGE.getMessage());
-
-            return deleteUserResponse;
+            return new DeleteUserResponse(UserMessagesEnum.USER_DELETED_SUCCESSFULLY_MESSAGE.getMessage());
         } else {
             throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
         }
+    }
+
+    private CreateUserResponse buildCreateUserResponse(Integer userId) {
+        CreateUserResponse createUserResponse = new CreateUserResponse();
+        createUserResponse.setClientId(userId.toString());
+        createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
+        return createUserResponse;
     }
 }

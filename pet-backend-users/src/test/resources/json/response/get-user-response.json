@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "lastName": "Ivanov",
+  "firstName": "Ivan",
+  "fatherName": "Ivanovich",
+  "phoneNumber": "79524298088",
+  "birthDate": "22.09.1990",
+  "passportNumber": "7777777778",
+  "email": "ivan@mail.ru",
+  "createDateTime": "2023-12-13 18:25:25",
+  "isActive": true,
+  "isDeleted": false
+}
