@@ -65,12 +65,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private CreateUserResponse buildCreateUserResponse(Integer userId) {
+        CreateUserResponse createUserResponse = new CreateUserResponse();
+        createUserResponse.setClientId(userId.toString());
+        createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
+        return createUserResponse;
+    }
+
     /**
      * Получает информацию о пользователе по идентификатору.
      *
      * @param id Идентификатор клиента.
      * @return Ответ с информацией о пользователе.
-     * @throws UserNotFoundException        В случае, если пользователь не найден.
+     * @throws UserNotFoundException В случае, если пользователь не найден.
      */
     @Override
     public GetUserResponse getUserById(String id) {
@@ -151,12 +158,5 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
         }
-    }
-
-    private CreateUserResponse buildCreateUserResponse(Integer userId) {
-        CreateUserResponse createUserResponse = new CreateUserResponse();
-        createUserResponse.setClientId(userId.toString());
-        createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
-        return createUserResponse;
     }
 }

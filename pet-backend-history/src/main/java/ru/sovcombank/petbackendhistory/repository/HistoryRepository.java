@@ -12,4 +12,6 @@ public interface HistoryRepository extends JpaRepository<History, UUID> {
 
     @Query("SELECT h FROM history h WHERE h.accountNumberFrom IN :accountNumbers OR h.accountNumberTo IN :accountNumbers")
     List<History> findByAccountNumbers(@Param("accountNumbers") List<String> accountNumbers);
+
+    History findByUuid(UUID uuid);
 }

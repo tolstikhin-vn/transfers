@@ -23,3 +23,8 @@ spring:
 
 account-service:
   url: http://pet-backend-accounts:8082
+
+kafka:
+  topic:
+    transfers-history-transaction: transfers-history-transaction
+    history-group: history-group

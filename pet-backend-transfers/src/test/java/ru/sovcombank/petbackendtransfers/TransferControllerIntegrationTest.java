@@ -6,7 +6,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,6 +42,8 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Testcontainers
@@ -69,6 +73,10 @@ public class TransferControllerIntegrationTest {
 
     @MockBean
     private KafkaTemplate<String, Transfer> kafkaTemplate;
+
+    @Value("${kafka.topic.transfers-history-transaction}")
+    private String expectedKafkaTopic;
+
 
     @LocalServerPort
     private int port;
@@ -125,6 +133,27 @@ public class TransferControllerIntegrationTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(expectedResponse, actualResponse);
+
+        ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Transfer> transferCaptor = ArgumentCaptor.forClass(Transfer.class);
+
+        verify(kafkaTemplate).send(topicCaptor.capture(), transferCaptor.capture());
+
+        String actualTopic = topicCaptor.getValue();
+        Transfer actualTransfer = transferCaptor.getValue();
+
+        assertEquals(expectedKafkaTopic, actualTopic);
+
+        Transfer expectedTransfer = readFromJson(
+                "entity/make-transfer-entity.json",
+                Transfer.class);
+
+        expectedTransfer.setUuid(actualTransfer.getUuid());
+        expectedTransfer.setTransactionDateTime(actualTransfer.getTransactionDateTime());
+
+        assertEquals(expectedTransfer, actualTransfer);
+
+        verify(kafkaTemplate, times(1)).send(actualTopic, actualTransfer);
     }
 
     @Test
