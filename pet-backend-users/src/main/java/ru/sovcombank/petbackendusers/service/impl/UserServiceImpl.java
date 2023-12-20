@@ -4,6 +4,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sovcombank.petbackendusers.builder.ResponseBuilder;
 import ru.sovcombank.petbackendusers.exception.ConflictException;
 import ru.sovcombank.petbackendusers.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendusers.exception.UserNotFoundException;
@@ -33,15 +34,18 @@ public class UserServiceImpl implements UserService {
     private final CreateUserRequestToUser createUserRequestToUser;
     private final UpdateUserRequestToUser updateUserRequestToUser;
     private final UserToGetUserResponse userToGetUserResponse;
+    private final ResponseBuilder responseBuilder;
 
     public UserServiceImpl(UserRepository userRepository,
                            CreateUserRequestToUser createUserRequestToUser,
                            UpdateUserRequestToUser updateUserRequestToUser,
-                           UserToGetUserResponse userToGetUserResponse) {
+                           UserToGetUserResponse userToGetUserResponse,
+                           ResponseBuilder responseBuilder) {
         this.userRepository = userRepository;
         this.createUserRequestToUser = createUserRequestToUser;
         this.updateUserRequestToUser = updateUserRequestToUser;
         this.userToGetUserResponse = userToGetUserResponse;
+        this.responseBuilder = responseBuilder;
     }
 
     /**
@@ -56,20 +60,13 @@ public class UserServiceImpl implements UserService {
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         try {
             User createdUser = userRepository.save(createUserRequestToUser.map(createUserRequest));
-            return buildCreateUserResponse(createdUser.getId());
+            return responseBuilder.buildCreateUserResponse(createdUser.getId());
         } catch (DataIntegrityViolationException ex) {
             if (ex.getCause() instanceof ConstraintViolationException) {
                 throw new ConflictException(ex);
             }
             throw new InternalServerErrorException(ex);
         }
-    }
-
-    private CreateUserResponse buildCreateUserResponse(Integer userId) {
-        CreateUserResponse createUserResponse = new CreateUserResponse();
-        createUserResponse.setClientId(userId.toString());
-        createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
-        return createUserResponse;
     }
 
     /**
@@ -81,7 +78,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public GetUserResponse getUserById(String id) {
-
         Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
         if (userOptional.isPresent()) {
             return userToGetUserResponse.map(userOptional.get());
@@ -95,7 +91,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param phoneNumber Идентификатор клиента.
      * @return Ответ с информацией о пользователе.
-     * @throws UserNotFoundException        В случае, если пользователь не найден.
+     * @throws UserNotFoundException В случае, если пользователь не найден.
      */
     @Override
     public GetUserResponse getUserByPhoneNumber(String phoneNumber) {
@@ -113,7 +109,7 @@ public class UserServiceImpl implements UserService {
      * @param id                Идентификатор клиента.
      * @param updateUserRequest Запрос на изменение данных.
      * @return Ответ с сообщением.
-     * @throws UserNotFoundException        В случае, если пользователь не найден.
+     * @throws UserNotFoundException В случае, если пользователь не найден.
      */
     @Override
     @Transactional
@@ -142,7 +138,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param id Идентификатор клиента.
      * @return Ответ с сообщением.
-     * @throws UserNotFoundException        В случае, если пользователь не найден.
+     * @throws UserNotFoundException В случае, если пользователь не найден.
      */
     @Override
     @Transactional

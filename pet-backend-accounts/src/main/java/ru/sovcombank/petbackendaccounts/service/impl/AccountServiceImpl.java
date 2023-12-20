@@ -2,6 +2,7 @@ package ru.sovcombank.petbackendaccounts.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sovcombank.petbackendaccounts.builder.ResponseBuilder;
 import ru.sovcombank.petbackendaccounts.client.UserServiceClient;
 import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
@@ -38,18 +39,21 @@ public class AccountServiceImpl implements AccountService {
     private final CreateAccountRequestToAccount createAccountRequestToAccount;
     private final AccountToGetAccountResponse accountToGetAccountResponse;
     private final UserServiceClient userServiceClient;
+    private final ResponseBuilder responseBuilder;
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
                               CreateAccountRequestToAccount createAccountRequestToAccount,
                               AccountToGetAccountResponse accountToGetAccountResponse,
-                              UserServiceClient userServiceClient) {
+                              UserServiceClient userServiceClient,
+                              ResponseBuilder responseBuilder) {
         this.accountRepository = accountRepository;
         this.listAccountToGetAccountsResponse = listAccountToGetAccountsResponse;
         this.createAccountRequestToAccount = createAccountRequestToAccount;
         this.accountToGetAccountResponse = accountToGetAccountResponse;
         this.userServiceClient = userServiceClient;
+        this.responseBuilder = responseBuilder;
     }
 
     /**
@@ -83,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
 
             Account createdAccount = accountRepository.save(accountEntity);
 
-            return buildCreateAccountResponse(createdAccount);
+            return responseBuilder.buildCreateAccountResponse(createdAccount);
         } else {
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage());
         }
@@ -104,13 +108,6 @@ public class AccountServiceImpl implements AccountService {
     private boolean hasMoreThenOneAccount(String clientId) {
         Optional<List<Account>> existingAccounts = accountRepository.findByClientId(Integer.valueOf(clientId));
         return existingAccounts.filter(accounts -> accounts.size() >= 1).isPresent();
-    }
-
-    private CreateAccountResponse buildCreateAccountResponse(Account createdAccount) {
-        CreateAccountResponse createAccountResponse = new CreateAccountResponse();
-        createAccountResponse.setAccountNumber(createdAccount.getAccountNumber());
-        createAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
-        return createAccountResponse;
     }
 
     /**

@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendtransfers.builders;
+package ru.sovcombank.petbackendtransfers.builder;
 
 import org.springframework.stereotype.Component;
 import ru.sovcombank.petbackendtransfers.model.entity.Transfer;

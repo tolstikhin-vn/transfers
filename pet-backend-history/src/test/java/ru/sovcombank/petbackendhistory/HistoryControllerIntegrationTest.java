@@ -81,7 +81,7 @@ public class HistoryControllerIntegrationTest {
     @Test
     @Sql("/sql/insert-history.sql")
     @DisplayName("Получение истории переводов: успешный сценарий")
-    void getTransferHistorySuccessfully() throws IOException {
+    public void getTransferHistorySuccessfully() throws IOException {
         when(accountServiceClient.getAccountsResponse(anyString()))
                 .thenReturn(readFromJson(
                         "response/get-accounts-response.json",
