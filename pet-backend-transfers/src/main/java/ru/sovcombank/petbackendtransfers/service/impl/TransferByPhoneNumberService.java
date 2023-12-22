@@ -91,13 +91,12 @@ public class TransferByPhoneNumberService {
         String phoneNumberFrom = makeTransferByPhoneRequest.getPhoneNumberFrom();
 
         userValidator.validateUserForTransferByPhone(clientIdFrom, phoneNumberFrom);
-        System.out.println("все хорошо");
 
         GetAccountsResponse getAccountsResponseFrom = responseBuilder.getAccountsResponse(clientIdFrom);
         String mainAccountFrom = transferHelper.getMainAccount(getAccountsResponseFrom.getAccountList());
-        System.out.println("вошел");
+
         GetAccountResponse getAccountResponseFrom = responseBuilder.getAccountResponse(mainAccountFrom);
-        System.out.println("вышел");
+
         accountValidator.validateAccountForTransfer(getAccountResponseFrom);
 
         accountValidator.validateCur(makeTransferByPhoneRequest.getCur(), getAccountResponseFrom.getCur());
@@ -113,7 +112,7 @@ public class TransferByPhoneNumberService {
         String phoneNumberTo = makeTransferByPhoneRequest.getPhoneNumberTo();
         GetUserResponse getUserResponse = userServiceClient.getUserInfo(phoneNumberTo);
         userValidator.validateActiveUser(getUserResponse);
-        System.out.println("я тут");
+
         GetAccountsResponse getAccountsResponseTo = responseBuilder.getAccountsResponse(Integer.toString(getUserResponse.getId()));
         String mainAccountTo = transferHelper.getMainAccount(getAccountsResponseTo.getAccountList());
 
