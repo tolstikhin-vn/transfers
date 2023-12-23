@@ -42,7 +42,6 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -106,6 +105,17 @@ public class TransferControllerIntegrationTest {
                 "request/make-transfer-by-account-request.json",
                 Map.class);
 
+        MakeTransferResponse expectedResponse = readFromJson(
+                "response/make-transfer-response.json",
+                MakeTransferResponse.class);
+
+        Transfer expectedTransfer = readFromJson(
+                "entity/make-transfer-entity.json",
+                Transfer.class);
+
+        ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Transfer> transferCaptor = ArgumentCaptor.forClass(Transfer.class);
+
         when(userServiceClient.checkUserExistsForTransferByAccount(anyString()))
                 .thenReturn(true);
 
@@ -124,36 +134,22 @@ public class TransferControllerIntegrationTest {
                 requestMap,
                 MakeTransferResponse.class);
 
-        MakeTransferResponse expectedResponse = readFromJson(
-                "response/make-transfer-response.json",
-                MakeTransferResponse.class);
-
         MakeTransferResponse actualResponse = responseEntity.getBody();
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(expectedResponse, actualResponse);
 
-        ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Transfer> transferCaptor = ArgumentCaptor.forClass(Transfer.class);
-
         verify(kafkaTemplate).send(topicCaptor.capture(), transferCaptor.capture());
 
         String actualTopic = topicCaptor.getValue();
         Transfer actualTransfer = transferCaptor.getValue();
 
-        assertEquals(expectedKafkaTopic, actualTopic);
-
-        Transfer expectedTransfer = readFromJson(
-                "entity/make-transfer-entity.json",
-                Transfer.class);
-
         expectedTransfer.setUuid(actualTransfer.getUuid());
         expectedTransfer.setTransactionDateTime(actualTransfer.getTransactionDateTime());
 
+        assertEquals(expectedKafkaTopic, actualTopic);
         assertEquals(expectedTransfer, actualTransfer);
-
-        verify(kafkaTemplate, times(1)).send(actualTopic, actualTransfer);
     }
 
     @Test
@@ -162,6 +158,10 @@ public class TransferControllerIntegrationTest {
         Map<String, Object> requestMap = readFromJson(
                 "request/make-transfer-by-phone-request.json",
                 Map.class);
+
+        MakeTransferResponse expectedResponse = readFromJson(
+                "response/make-transfer-response.json",
+                MakeTransferResponse.class);
 
         when(userServiceClient.checkUserExistsForTransferByPhone(anyString(), anyString()))
                 .thenReturn(true);
@@ -189,10 +189,6 @@ public class TransferControllerIntegrationTest {
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
                 BASE_HOST + port + "/transfers/new",
                 requestMap,
-                MakeTransferResponse.class);
-
-        MakeTransferResponse expectedResponse = readFromJson(
-                "response/make-transfer-response.json",
                 MakeTransferResponse.class);
 
         MakeTransferResponse actualResponse = responseEntity.getBody();

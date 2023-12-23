@@ -82,6 +82,10 @@ public class HistoryControllerIntegrationTest {
     @Sql("/sql/insert-history.sql")
     @DisplayName("Получение истории переводов: успешный сценарий")
     public void getTransferHistorySuccessfully() throws IOException {
+        GetTransferHistoryResponse expectedResponse = readFromJson(
+                "response/get-transfer-history-response.json",
+                GetTransferHistoryResponse.class);
+
         when(accountServiceClient.getAccountsResponse(anyString()))
                 .thenReturn(readFromJson(
                         "response/get-accounts-response.json",
@@ -89,10 +93,6 @@ public class HistoryControllerIntegrationTest {
 
         ResponseEntity<GetTransferHistoryResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/history/1",
-                GetTransferHistoryResponse.class);
-
-        GetTransferHistoryResponse expectedResponse = readFromJson(
-                "response/get-transfer-history-response.json",
                 GetTransferHistoryResponse.class);
 
         GetTransferHistoryResponse actualResponse = responseEntity.getBody();

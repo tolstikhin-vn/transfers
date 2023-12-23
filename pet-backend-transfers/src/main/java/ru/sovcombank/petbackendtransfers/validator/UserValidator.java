@@ -2,8 +2,8 @@ package ru.sovcombank.petbackendtransfers.validator;
 
 import org.springframework.stereotype.Component;
 import ru.sovcombank.petbackendtransfers.client.UserServiceClient;
-import ru.sovcombank.petbackendtransfers.exception.BadRequestException;
 import ru.sovcombank.petbackendtransfers.exception.UserNotFoundException;
+import ru.sovcombank.petbackendtransfers.model.api.request.MakeTransferByPhoneRequest;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendtransfers.model.enums.TransferResponseMessagesEnum;
 
@@ -25,8 +25,10 @@ public class UserValidator {
 
     // Валидация клиента для перевода по номеру телефона
     // (проверка полей isActive, isDeleted и совпадение номера телефона)
-    public void validateUserForTransferByPhone(String clientIdFrom, String phoneNumberFrom) {
-        if (!userServiceClient.checkUserExistsForTransferByPhone(clientIdFrom, phoneNumberFrom)) {
+    public void validateUserForTransferByPhone(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        if (!userServiceClient.checkUserExistsForTransferByPhone(
+                makeTransferByPhoneRequest.getClientId(),
+                makeTransferByPhoneRequest.getPhoneNumberFrom())) {
             throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
         }
     }
@@ -35,13 +37,6 @@ public class UserValidator {
     public void validateActiveUser(GetUserResponse getUserResponse) {
         if (!getUserResponse.isActive() || getUserResponse.isDeleted()) {
             throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
-        }
-    }
-
-    // Проверка на перевод самому себе
-    public void checkRepeatNumbers(String numberFrom, String numberTo, String message) {
-        if (numberTo.equals(numberFrom)) {
-            throw new BadRequestException(message);
         }
     }
 }

@@ -130,14 +130,14 @@ public class UserControllerIntegrationTest {
                 "request/create-user-request.json",
                 CreateUserRequest.class);
 
+        GetUserResponse expectedResponse = readFromJson(
+                "response/get-user-response.json",
+                GetUserResponse.class);
+
         userService.createUser(createUserRequest);
 
         ResponseEntity<GetUserResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/users/1",
-                GetUserResponse.class);
-
-        GetUserResponse expectedResponse = readFromJson(
-                "response/get-user-response.json",
                 GetUserResponse.class);
 
         GetUserResponse actualResponse = responseEntity.getBody();
@@ -168,14 +168,14 @@ public class UserControllerIntegrationTest {
                 "request/create-user-request.json",
                 CreateUserRequest.class);
 
+        GetUserResponse expectedResponse = readFromJson(
+                "response/get-user-response.json",
+                GetUserResponse.class);
+
         userService.createUser(createUserRequest);
 
         ResponseEntity<GetUserResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/users/phone-number/" + createUserRequest.getPhoneNumber(),
-                GetUserResponse.class);
-
-        GetUserResponse expectedResponse = readFromJson(
-                "response/get-user-response.json",
                 GetUserResponse.class);
 
         GetUserResponse actualResponse = responseEntity.getBody();
@@ -206,11 +206,11 @@ public class UserControllerIntegrationTest {
                 "request/create-user-request.json",
                 CreateUserRequest.class);
 
-        CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
-
         UpdateUserRequest updateUserRequest = readFromJson(
                 "request/update-user-request.json",
                 UpdateUserRequest.class);
+
+        CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
 
         ResponseEntity<UpdateUserResponse> responseEntity = restTemplate.exchange(
                 BASE_HOST + port + "/users/" + createUserResponse.getClientId(),

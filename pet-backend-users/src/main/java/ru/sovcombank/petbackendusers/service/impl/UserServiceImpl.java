@@ -1,6 +1,8 @@
 package ru.sovcombank.petbackendusers.service.impl;
 
 import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,8 @@ import java.util.Optional;
  */
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
     private final CreateUserRequestToUser createUserRequestToUser;
@@ -60,8 +64,10 @@ public class UserServiceImpl implements UserService {
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         try {
             User createdUser = userRepository.save(createUserRequestToUser.map(createUserRequest));
+            logger.info("User created with id: {}", createdUser.getId());
             return responseBuilder.buildCreateUserResponse(createdUser.getId());
         } catch (DataIntegrityViolationException ex) {
+            logger.error("Error creating user", ex);
             if (ex.getCause() instanceof ConstraintViolationException) {
                 throw new ConflictException(ex);
             }
