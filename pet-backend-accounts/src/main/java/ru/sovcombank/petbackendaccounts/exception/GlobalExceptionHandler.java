@@ -8,12 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.sovcombank.petbackendaccounts.api.response.CreateAccountResponse;
-import ru.sovcombank.petbackendaccounts.api.response.DeleteAccountResponse;
-import ru.sovcombank.petbackendaccounts.api.response.MessageErrorResponse;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.MessageResponse;
 
 /**
  * Глобальный обработчик исключений для управления ошибками в приложении.
@@ -24,33 +20,28 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InternalServerErrorException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<MessageErrorResponse> handleInternalServerErrorException(InternalServerErrorException ex) {
-        return new ResponseEntity<>(new MessageErrorResponse(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<MessageResponse> handleInternalServerErrorException(InternalServerErrorException ex) {
+        return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<MessageErrorResponse> handleBadRequestException(BadRequestException ex) {
-        return new ResponseEntity<>(new MessageErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<MessageResponse> handleBadRequestException(BadRequestException ex) {
+        return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<MessageErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-        List<String> invalidFields = ex.getBindingResult().getAllErrors()
-                .stream()
-                .map(error -> ((FieldError) error).getField())
-                .collect(Collectors.toList());
-
-        String errorMessage = "Некорректный запрос по полю " + String.join(", ", invalidFields);
-
-        return new ResponseEntity<>(new MessageErrorResponse(errorMessage), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<MessageResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        FieldError invalidField = ex.getBindingResult().getFieldError();
+        String errorMessage = String.format("Некорректный запрос по полю %s", invalidField.getField());
+        return new ResponseEntity<>(new MessageResponse(errorMessage), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<CreateAccountResponse> handleUserNotFoundException(UserNotFoundException ex) {
-        return new ResponseEntity<>(new CreateAccountResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
+    public ResponseEntity<MessageResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccountNotFoundException.class)
