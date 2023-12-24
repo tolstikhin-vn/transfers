@@ -67,11 +67,18 @@ public class GlobalExceptionHandler {
 
         String errorMessage = "";
         while (matcher.find()) {
-            String field = matcher.group(1); // Поле
             String value = matcher.group(2); // Значение
-            errorMessage = String.format("%s с таким %s уже зарегистрирован", value, field);
+            errorMessage = String.format("%s с таким %s уже зарегистрирован", value, getErrorField(matcher.group(1)));
         }
 
         return new ResponseEntity<>(new MessageResponse(errorMessage), HttpStatus.CONFLICT);
+    }
+
+    private String getErrorField(String field) {
+        return switch (field) {
+            case "phone_number" -> "phoneNumber";
+            case "passport_number" -> "passportNumber";
+            default -> "";
+        };
     }
 }

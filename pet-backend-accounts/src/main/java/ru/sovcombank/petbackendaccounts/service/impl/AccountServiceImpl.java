@@ -69,6 +69,7 @@ public class AccountServiceImpl implements AccountService {
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
         String clientId = createAccountRequest.getClientId();
+
         // Проверка существования клиента с таким clientId
         userServiceClient.checkUserExists(clientId);
 
@@ -197,13 +198,14 @@ public class AccountServiceImpl implements AccountService {
         // Проверяем существование клиента по переданному идентификатору
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
         if (accountOptional.isPresent()) {
-            Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
-            accountRepository.save(changedAccount);
+            if (!accountOptional.get().isClosed()) {
+                Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
+                accountRepository.save(changedAccount);
 
-            return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
-        } else {
-            throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+                return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+            }
         }
+        throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
     }
 
     // Совершает операцию пополнения/снятия исходя из запроса.

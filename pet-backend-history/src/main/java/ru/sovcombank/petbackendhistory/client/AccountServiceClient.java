@@ -3,6 +3,7 @@ package ru.sovcombank.petbackendhistory.client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.sovcombank.petbackendhistory.exception.UserNotFoundException;
 import ru.sovcombank.petbackendhistory.mapping.impl.ResponseToGetAccountsResponse;
@@ -40,9 +41,14 @@ public class AccountServiceClient {
     public GetAccountsResponse getAccountsResponse(String clientId) {
         String getAccountsUrl = accountServiceUrl + "/accounts/" + clientId;
 
-        ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountsUrl, Object.class);
-        if (!responseEntity.getStatusCode().isError()) {
-            return responseToGetAccountsResponse.map(responseEntity);
+        try {
+
+            ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountsUrl, Object.class);
+            if (!responseEntity.getStatusCode().isError()) {
+                return responseToGetAccountsResponse.map(responseEntity);
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new UserNotFoundException(HistoryResponseMessagesEnum.USER_NOT_FOUND.getMessage());
         }
         throw new UserNotFoundException(HistoryResponseMessagesEnum.USER_NOT_FOUND.getMessage());
     }

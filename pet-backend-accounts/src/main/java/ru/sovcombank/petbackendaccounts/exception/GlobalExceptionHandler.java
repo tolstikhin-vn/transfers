@@ -8,7 +8,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.MessageResponse;
 
@@ -41,8 +40,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<CreateAccountResponse> handleUserNotFoundException(UserNotFoundException ex) {
-        return new ResponseEntity<>(new CreateAccountResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
+    public ResponseEntity<MessageResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccountNotFoundException.class)
