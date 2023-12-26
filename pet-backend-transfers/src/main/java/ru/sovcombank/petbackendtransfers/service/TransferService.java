@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendtransfers.service.builder;
+package ru.sovcombank.petbackendtransfers.service;
 
 import ru.sovcombank.petbackendtransfers.model.api.response.GetTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MakeTransferResponse;

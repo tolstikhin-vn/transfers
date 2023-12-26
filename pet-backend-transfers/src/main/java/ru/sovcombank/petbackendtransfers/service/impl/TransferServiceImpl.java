@@ -14,7 +14,7 @@ import ru.sovcombank.petbackendtransfers.model.entity.Transfer;
 import ru.sovcombank.petbackendtransfers.model.enums.RequestTypeEnum;
 import ru.sovcombank.petbackendtransfers.model.enums.TransferResponseMessagesEnum;
 import ru.sovcombank.petbackendtransfers.repository.TransferRepository;
-import ru.sovcombank.petbackendtransfers.service.builder.TransferService;
+import ru.sovcombank.petbackendtransfers.service.TransferService;
 
 import java.util.Map;
 import java.util.UUID;

@@ -22,7 +22,7 @@ import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
 import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
-import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
+import ru.sovcombank.petbackendaccounts.service.AccountService;
 
 import java.util.List;
 import java.util.Optional;

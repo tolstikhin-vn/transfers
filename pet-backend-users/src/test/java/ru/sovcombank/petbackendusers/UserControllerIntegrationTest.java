@@ -28,7 +28,7 @@ import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.MessageResponse;
 import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
 import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
-import ru.sovcombank.petbackendusers.service.builder.UserService;
+import ru.sovcombank.petbackendusers.service.UserService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,7 +88,7 @@ public class UserControllerIntegrationTest {
                 CreateUserRequest.class);
 
         ResponseEntity<CreateUserResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/users/new",
+                BASE_HOST + port + "/users",
                 createUserRequest,
                 CreateUserResponse.class);
 
@@ -113,7 +113,7 @@ public class UserControllerIntegrationTest {
         userService.createUser(createUserRequest);
 
         ResponseEntity<MessageResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/users/new",
+                BASE_HOST + port + "/users",
                 createUserRequest,
                 MessageResponse.class);
 

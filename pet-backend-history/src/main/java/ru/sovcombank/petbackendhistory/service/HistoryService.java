@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendhistory.service.builder;
+package ru.sovcombank.petbackendhistory.service;
 
 import ru.sovcombank.petbackendhistory.model.api.response.GetTransferHistoryResponse;
 

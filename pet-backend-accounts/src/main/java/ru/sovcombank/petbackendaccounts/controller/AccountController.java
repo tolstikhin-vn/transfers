@@ -18,7 +18,7 @@ import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
-import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
+import ru.sovcombank.petbackendaccounts.service.AccountService;
 
 /**
  * Контроллер для управления счетами.
@@ -39,8 +39,8 @@ public class AccountController {
      * @param createAccountRequest Запрос на создание счета.
      * @return Ответ с результатом создания счета.
      */
-    @PostMapping("/new")
-    public ResponseEntity<Object> createUser(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
+    @PostMapping()
+    public ResponseEntity<Object> createAccount(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
         CreateAccountResponse response = accountService.createAccount(createAccountRequest);
         return ResponseEntity.ok(response);
     }
@@ -102,7 +102,7 @@ public class AccountController {
      * @return Ответ с результатом изменения баланса.
      */
     @PutMapping("/balance/{accountNumber}")
-    public ResponseEntity<Object> updateUser(@PathVariable String accountNumber, @Valid @RequestBody UpdateBalanceRequest updateBalanceRequest) {
+    public ResponseEntity<Object> updateBalance(@PathVariable String accountNumber, @Valid @RequestBody UpdateBalanceRequest updateBalanceRequest) {
         UpdateBalanceResponse response = accountService.updateBalance(accountNumber, updateBalanceRequest);
         return ResponseEntity.ok(response);
     }

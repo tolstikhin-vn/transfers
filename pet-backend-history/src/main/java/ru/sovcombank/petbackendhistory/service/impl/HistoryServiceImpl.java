@@ -5,7 +5,7 @@ import ru.sovcombank.petbackendhistory.mapping.impl.ListTransferToGetHistoryTran
 import ru.sovcombank.petbackendhistory.model.api.response.GetTransferHistoryResponse;
 import ru.sovcombank.petbackendhistory.model.entity.History;
 import ru.sovcombank.petbackendhistory.repository.HistoryRepository;
-import ru.sovcombank.petbackendhistory.service.builder.HistoryService;
+import ru.sovcombank.petbackendhistory.service.HistoryService;
 
 import java.util.List;
 

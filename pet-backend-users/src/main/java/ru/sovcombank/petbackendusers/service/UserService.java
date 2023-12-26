@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendusers.service.builder;
+package ru.sovcombank.petbackendusers.service;
 
 import ru.sovcombank.petbackendusers.model.api.request.CreateUserRequest;
 import ru.sovcombank.petbackendusers.model.api.request.UpdateUserRequest;

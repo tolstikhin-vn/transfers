@@ -130,7 +130,7 @@ public class TransferControllerIntegrationTest {
                         GetBalanceResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -187,7 +187,7 @@ public class TransferControllerIntegrationTest {
                         GetBalanceResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -206,7 +206,7 @@ public class TransferControllerIntegrationTest {
                 Map.class);
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -237,7 +237,7 @@ public class TransferControllerIntegrationTest {
                         GetAccountResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -268,7 +268,7 @@ public class TransferControllerIntegrationTest {
                         GetAccountResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -299,7 +299,7 @@ public class TransferControllerIntegrationTest {
                         GetAccountResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
