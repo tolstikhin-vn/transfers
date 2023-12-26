@@ -1,4 +1,6 @@
 {
+  "clientIdFrom": 1,
+  "clientIdTo": 1,
   "accountNumberFrom": "4200933666961739",
   "accountNumberTo": "4200810666632677",
   "amount": 100.0,

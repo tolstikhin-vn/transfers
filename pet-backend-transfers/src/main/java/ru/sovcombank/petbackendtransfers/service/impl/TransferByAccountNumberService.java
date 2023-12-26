@@ -67,13 +67,19 @@ public class TransferByAccountNumberService {
         accountValidator.validateSufficientFunds(accountNumberFrom, transferAmount);
 
         String accountNumberTo = makeTransferByAccountRequest.getAccountNumberTo();
-        GetAccountResponse getAccountResponseTo = responseBuilder.getValidateGetAccountResponse(accountNumberTo);
+        GetAccountResponse getAccountToResponse = responseBuilder.getValidateGetAccountResponse(accountNumberTo);
 
-        userValidator.validateUserForTransferByAccount(getAccountResponseTo.getClientId());
+        userValidator.validateUserForTransferByAccount(getAccountToResponse.getClientId());
 
-        transferServiceHelper.updateBalance(cur, getAccountResponseTo, accountNumberFrom, accountNumberTo, transferAmount);
+        transferServiceHelper.updateBalance(cur, getAccountToResponse, accountNumberFrom, accountNumberTo, transferAmount);
 
-        transferServiceHelper.saveAndSendTransfer(accountNumberFrom, accountNumberTo, transferAmount, cur);
+        transferServiceHelper.saveAndSendTransfer(
+                getAccountFromResponse.getClientId(),
+                getAccountToResponse.getClientId(),
+                accountNumberFrom,
+                accountNumberTo,
+                transferAmount,
+                cur);
 
         return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(accountNumberFrom).getBalance());
     }

@@ -9,8 +9,8 @@ import ru.sovcombank.petbackendaccounts.model.entity.Account;
 
 import java.util.List;
 
-@Component
 @Data
+@Component
 public class ListAccountToGetAccountsResponse implements Mapper<List<Account>, GetAccountsResponse> {
 
     private final Mapper<Account, AccountDTO> accountToAccountDTO;

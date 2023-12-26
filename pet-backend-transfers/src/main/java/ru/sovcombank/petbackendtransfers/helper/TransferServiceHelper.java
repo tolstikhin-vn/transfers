@@ -8,9 +8,11 @@ import ru.sovcombank.petbackendtransfers.builder.TransferBuilder;
 import ru.sovcombank.petbackendtransfers.converter.CurrencyConverter;
 import ru.sovcombank.petbackendtransfers.db.DatabaseChanger;
 import ru.sovcombank.petbackendtransfers.exception.AccountNotFoundException;
+import ru.sovcombank.petbackendtransfers.mapping.impl.TransferToTransferDTO;
 import ru.sovcombank.petbackendtransfers.model.api.request.UpdateBalanceRequest;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendtransfers.model.dto.AccountDTO;
+import ru.sovcombank.petbackendtransfers.model.dto.TransferDTO;
 import ru.sovcombank.petbackendtransfers.model.entity.Transfer;
 import ru.sovcombank.petbackendtransfers.model.enums.CurEnum;
 import ru.sovcombank.petbackendtransfers.model.enums.TransferResponseMessagesEnum;
@@ -26,17 +28,25 @@ public class TransferServiceHelper {
     private final RequestBuilder requestBuilder;
     private final DatabaseChanger databaseChanger;
     private final TransferBuilder transferBuilder;
-    private final KafkaTemplate<String, Transfer> kafkaTemplate;
+    private final KafkaTemplate<String, TransferDTO> kafkaTemplate;
+
+    private final TransferToTransferDTO transferToTransferDTO;
 
     @Value("${kafka.topic.transfers-history-transaction}")
     private String kafkaTopic;
 
-    public TransferServiceHelper(CurrencyConverter currencyConverter, RequestBuilder requestBuilder, DatabaseChanger databaseChanger, TransferBuilder transferBuilder, KafkaTemplate<String, Transfer> kafkaTemplate) {
+    public TransferServiceHelper(CurrencyConverter currencyConverter,
+                                 RequestBuilder requestBuilder,
+                                 DatabaseChanger databaseChanger,
+                                 TransferBuilder transferBuilder,
+                                 KafkaTemplate<String, TransferDTO> kafkaTemplate,
+                                 TransferToTransferDTO transferToTransferDTO) {
         this.currencyConverter = currencyConverter;
         this.requestBuilder = requestBuilder;
         this.databaseChanger = databaseChanger;
         this.transferBuilder = transferBuilder;
         this.kafkaTemplate = kafkaTemplate;
+        this.transferToTransferDTO = transferToTransferDTO;
     }
 
     // Получение суммы перевода после конвертации валют
@@ -89,11 +99,18 @@ public class TransferServiceHelper {
         databaseChanger.updateAccountBalance(accountNumberTo, updateBalanceRequestForAccountTo);
     }
 
-    public void saveAndSendTransfer(String accountNumberFrom, String accountNumberTo, BigDecimal amount, String cur) {
+    public void saveAndSendTransfer(String clientIdFrom, String clientIdTo, String accountNumberFrom, String accountNumberTo, BigDecimal amount, String cur) {
         Transfer transfer = transferBuilder.createTransferObject(accountNumberFrom, accountNumberTo, amount, cur);
 
         databaseChanger.saveTransfer(transfer);
 
-        kafkaTemplate.send(kafkaTopic, transfer);
+        kafkaTemplate.send(kafkaTopic, getTransferDTO(transfer, clientIdFrom, clientIdTo));
+    }
+
+    private TransferDTO getTransferDTO(Transfer transfer, String clientIdFrom, String clientIdTo) {
+        TransferDTO transferDTO = transferToTransferDTO.map(transfer);
+        transferDTO.setClientIdFrom(Integer.valueOf(clientIdFrom));
+        transferDTO.setClientIdTo(Integer.valueOf(clientIdTo));
+        return transferDTO;
     }
 }

@@ -64,26 +64,32 @@ public class TransferByPhoneNumberService {
 
         String mainAccountFrom = transferServiceHelper.getMainAccount(responseBuilder.getAccountsResponse(
                 makeTransferByPhoneRequest.getClientId()).getAccountList());
-        GetAccountResponse getAccountResponseFrom = responseBuilder.getAccountResponse(mainAccountFrom);
+        GetAccountResponse getAccountFromResponse = responseBuilder.getAccountResponse(mainAccountFrom);
 
-        accountValidator.validateAccountForTransfer(getAccountResponseFrom);
+        accountValidator.validateAccountForTransfer(getAccountFromResponse);
 
         BigDecimal transferAmount = makeTransferByPhoneRequest.getAmount();
         String cur = makeTransferByPhoneRequest.getCur();
-        accountValidator.validateCur(cur, getAccountResponseFrom.getCur());
+        accountValidator.validateCur(cur, getAccountFromResponse.getCur());
 
-        BigDecimal amountByCur = transferServiceHelper.getAmountByCur(cur, transferAmount, getAccountResponseFrom);
+        BigDecimal amountByCur = transferServiceHelper.getAmountByCur(cur, transferAmount, getAccountFromResponse);
         accountValidator.validateSufficientFunds(mainAccountFrom, amountByCur);
 
         GetUserResponse getUserResponse = userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo());
         userValidator.validateActiveUser(getUserResponse);
 
-        GetAccountsResponse getAccountsResponseTo = responseBuilder.getAccountsResponse(Integer.toString(getUserResponse.getId()));
-        String mainAccountTo = transferServiceHelper.getMainAccount(getAccountsResponseTo.getAccountList());
+        GetAccountsResponse getAccountsResponse = responseBuilder.getAccountsResponse(Integer.toString(getUserResponse.getId()));
+        String mainAccountTo = transferServiceHelper.getMainAccount(getAccountsResponse.getAccountList());
 
-        transferServiceHelper.updateBalance(cur, getAccountResponseFrom, mainAccountFrom, mainAccountTo, transferAmount);
+        transferServiceHelper.updateBalance(cur, getAccountFromResponse, mainAccountFrom, mainAccountTo, transferAmount);
 
-        transferServiceHelper.saveAndSendTransfer(mainAccountFrom, mainAccountTo, transferAmount, cur);
+        transferServiceHelper.saveAndSendTransfer(
+                getAccountFromResponse.getClientId(),
+                String.valueOf(getUserResponse.getId()),
+                mainAccountFrom,
+                mainAccountTo,
+                transferAmount,
+                cur);
 
         return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(mainAccountFrom).getBalance());
     }

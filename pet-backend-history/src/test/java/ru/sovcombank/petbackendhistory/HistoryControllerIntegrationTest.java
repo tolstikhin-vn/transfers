@@ -20,8 +20,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.sovcombank.petbackendhistory.client.AccountServiceClient;
-import ru.sovcombank.petbackendhistory.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendhistory.model.api.response.GetTransferHistoryResponse;
 import ru.sovcombank.petbackendhistory.service.impl.KafkaMessageHandlerService;
 
@@ -29,8 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,9 +46,6 @@ public class HistoryControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    private AccountServiceClient accountServiceClient;
 
     @MockBean
     private KafkaMessageHandlerService kafkaMessageHandlerService;
@@ -85,11 +78,6 @@ public class HistoryControllerIntegrationTest {
         GetTransferHistoryResponse expectedResponse = readFromJson(
                 "response/get-transfer-history-response.json",
                 GetTransferHistoryResponse.class);
-
-        when(accountServiceClient.getAccountsResponse(anyString()))
-                .thenReturn(readFromJson(
-                        "response/get-accounts-response.json",
-                        GetAccountsResponse.class));
 
         ResponseEntity<GetTransferHistoryResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/history/1",
