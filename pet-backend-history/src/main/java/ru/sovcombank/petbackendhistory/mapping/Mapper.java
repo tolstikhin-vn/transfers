@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendhistory.mapping.builder;
+package ru.sovcombank.petbackendhistory.mapping;
 
 import java.util.Collection;
 

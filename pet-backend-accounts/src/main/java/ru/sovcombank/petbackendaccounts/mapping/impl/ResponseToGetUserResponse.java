@@ -3,7 +3,7 @@ package ru.sovcombank.petbackendaccounts.mapping.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import ru.sovcombank.petbackendaccounts.mapping.builder.Mapper;
+import ru.sovcombank.petbackendaccounts.mapping.Mapper;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetUserResponse;
 
 @Component

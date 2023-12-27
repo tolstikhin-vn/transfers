@@ -2,7 +2,7 @@ package ru.sovcombank.petbackendtransfers.mapping.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import ru.sovcombank.petbackendtransfers.mapping.builder.Mapper;
+import ru.sovcombank.petbackendtransfers.mapping.Mapper;
 import ru.sovcombank.petbackendtransfers.model.api.request.MakeTransferByPhoneRequest;
 
 import java.util.Map;

@@ -3,7 +3,7 @@ package ru.sovcombank.petbackendhistory.mapping.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import ru.sovcombank.petbackendhistory.mapping.builder.Mapper;
+import ru.sovcombank.petbackendhistory.mapping.Mapper;
 import ru.sovcombank.petbackendhistory.model.api.response.GetAccountsResponse;
 
 @Component

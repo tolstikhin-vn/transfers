@@ -2,7 +2,7 @@ package ru.sovcombank.petbackendhistory.mapping.impl;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
-import ru.sovcombank.petbackendhistory.mapping.builder.Mapper;
+import ru.sovcombank.petbackendhistory.mapping.Mapper;
 import ru.sovcombank.petbackendhistory.model.api.response.GetTransferHistoryResponse;
 import ru.sovcombank.petbackendhistory.model.dto.HistoryDTO;
 import ru.sovcombank.petbackendhistory.model.entity.History;
