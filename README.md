@@ -29,7 +29,7 @@ docker-compose up
 ## API:
 ### pet-backend-users
 **Base URL:** localhost:8081<br>
-**Endpoint (POST)** /users/new - создание учетной записи<br> 
+**Endpoint (POST)** /users - создание учетной записи<br> 
 **Endpoint (GET)** /users/{id} - получение данных по клиенту<br> 
 **Endpoint (GET)** /users/phone-number/{phoneNumber} - получение данных по клиенту по номеру телефона<br> 
 **Endpoint (PUT)** /users/{id} - изменение данных по клиенту<br> 
@@ -37,7 +37,7 @@ docker-compose up
 
 ### pet-backend-accounts
 **Base URL:** localhost:8082<br> 
-**Endpoint (POST)** /accounts/new - создание счета<br> 
+**Endpoint (POST)** /accounts - создание счета<br> 
 **Endpoint (GET)** /accounts/{clientId} - получение счетов клиента<br> 
 **Endpoint (DELETE)** /accounts/{accountNumber} - удаление счета<br> 
 **Endpoint (GET)** /accounts/balance/{accountNumber} - получение баланса<br> 
@@ -45,7 +45,7 @@ docker-compose up
 
 ### pet-backend-transfers
 **Base URL:** localhost:8083<br> 
-**Endpoint (POST)** /transfers/new - операция перевода денег<br> 
+**Endpoint (POST)** /transfers - операция перевода денег<br> 
 **Endpoint (GET)** /transfers/{uuid} - получения информации о транзакции
 
 ### pet-backend-history
