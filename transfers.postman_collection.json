@@ -1,0 +1,1024 @@
+{
+	"info": {
+		"_postman_id": "4e290de5-2307-457b-9abb-1a86e705bf8a",
+		"name": "transfers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26304778"
+	},
+	"item": [
+		{
+			"name": "pet-backend-users",
+			"item": [
+				{
+					"name": "создание учетной записи",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "дубликат phoneNumber",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "дубликат passportNumber",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "некорректный phoneNumber",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "некорректный birthDate",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "некорректный passportNumber",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "некорректный email",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"new"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "получение данных по клиенту",
+					"item": [
+						{
+							"name": "успешно по id",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "по id: не найден пользователь",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "успешно по номеру телефона",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "по номеру телефона:  не найден пользователь",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "изменение данных по клиенту",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"bb\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"70000000000\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"4510666660\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "не найден пользователь",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"lastName\": \"bb\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"70000000000\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"4510666660\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/users/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "удаление клиента",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/users/5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "не найден пользователь",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/users/5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"users",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "pet-backend-accounts",
+			"item": [
+				{
+					"name": "создание счета",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \r\n    \"clientId\": \"1\" \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/accounts/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "не найден клиент",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \r\n    \"clientId\": \"1\" \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/accounts/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"new"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "получение счетов",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "не найден клиент",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "удаление счета",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/accounts/4200810666538495",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"4200810666538495"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "счет не найден",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/accounts/4200810666538495",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"4200810666538495"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "получение баланса",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/accounts/balance/4200810666538495",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"balance",
+										"4200810666538495"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "счет не найден",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/accounts/balance/4200810666538495",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"balance",
+										"4200810666538495"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "изменение баланса",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"typePayments\": \"REPLENISHMENT\",\r\n    \"amount\": 1000.00\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/accounts/balance/4200840666968319",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"balance",
+										"4200840666968319"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "счет не найден",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"typePayments\": \"REPLENISHMENT\",\r\n    \"amount\": 1000.00\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/accounts/balance/4200840666968319",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"accounts",
+										"balance",
+										"4200840666968319"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "pet-backend-transfers",
+			"item": [
+				{
+					"name": "перевод по номеру счета",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "не найден клиент",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "счет отправителя не найден",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "счет получателя не найден",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "некорректный requestType",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "недостаточно средств",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "перевод по номеру телефона",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"PHONE\",\r\n    \"accountNumberFrom\": \"79999999999\",\r\n    \"accountNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "не найден отправитель (по clientId)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"PHONE\",\r\n    \"accountNumberFrom\": \"79999999999\",\r\n    \"accountNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "не найден отправитель (по номеру тф)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"PHONE\",\r\n    \"accountNumberFrom\": \"79999999999\",\r\n    \"accountNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "не найден получатель (по номеру тф)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"PHONE\",\r\n    \"accountNumberFrom\": \"79999999999\",\r\n    \"accountNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "некорректный requestType",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "недостаточно средств",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/transfers/new",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"transfers",
+										"new"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "получение информации о транзакции",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "не найден перевод",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "pet-backend-history",
+			"item": [
+				{
+					"name": "получение списка переводов",
+					"item": [
+						{
+							"name": "успешно",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "клиент не найден",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
