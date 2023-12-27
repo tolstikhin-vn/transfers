@@ -1,5 +1,6 @@
 package ru.sovcombank.petbackendaccounts.service.impl;
 
+import jakarta.persistence.OptimisticLockException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sovcombank.petbackendaccounts.builder.ResponseBuilder;
@@ -23,6 +24,7 @@ import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
 import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
 import ru.sovcombank.petbackendaccounts.service.AccountService;
+import ru.sovcombank.petbackendaccounts.service.validator.AccountValidator;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,11 +37,19 @@ import java.util.Random;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+
     private final ListAccountToGetAccountsResponse listAccountToGetAccountsResponse;
+
     private final CreateAccountRequestToAccount createAccountRequestToAccount;
+
     private final AccountToGetAccountResponse accountToGetAccountResponse;
+
     private final UserServiceClient userServiceClient;
+
     private final ResponseBuilder responseBuilder;
+
+    private final AccountValidator accountValidator;
+
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
     public AccountServiceImpl(AccountRepository accountRepository,
@@ -47,13 +57,14 @@ public class AccountServiceImpl implements AccountService {
                               CreateAccountRequestToAccount createAccountRequestToAccount,
                               AccountToGetAccountResponse accountToGetAccountResponse,
                               UserServiceClient userServiceClient,
-                              ResponseBuilder responseBuilder) {
+                              ResponseBuilder responseBuilder, AccountValidator accountValidator) {
         this.accountRepository = accountRepository;
         this.listAccountToGetAccountsResponse = listAccountToGetAccountsResponse;
         this.createAccountRequestToAccount = createAccountRequestToAccount;
         this.accountToGetAccountResponse = accountToGetAccountResponse;
         this.userServiceClient = userServiceClient;
         this.responseBuilder = responseBuilder;
+        this.accountValidator = accountValidator;
     }
 
     /**
@@ -193,17 +204,26 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public UpdateBalanceResponse updateBalance(String accountNumber, UpdateBalanceRequest updateBalanceRequest) {
-        // Проверяем существование клиента по переданному идентификатору
-        Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
-        if (accountOptional.isPresent()) {
-            if (!accountOptional.get().isClosed()) {
-                Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
-                accountRepository.save(changedAccount);
+        int transferRepeatCount = 0;
+        do {
+            try {
+                // Проверяем существование клиента по переданному идентификатору
+                Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
+                if (accountOptional.isPresent()) {
+                    accountValidator.validateAccountIsClosed(accountOptional.get());
 
-                return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+                    Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
+                    accountRepository.save(changedAccount);
+
+                    return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+                } else {
+                    throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+                }
+            } catch (OptimisticLockException ex) {
+                transferRepeatCount++;
             }
-        }
-        throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+        } while (transferRepeatCount < 3);
+        throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
     }
 
     // Совершает операцию пополнения/снятия исходя из запроса.

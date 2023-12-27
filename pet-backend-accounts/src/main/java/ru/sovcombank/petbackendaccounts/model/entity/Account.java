@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.data.annotation.Version;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,4 +45,8 @@ public class Account {
 
     @Column(nullable = false)
     private boolean isClosed = false;
+
+    @Version
+    @Column(nullable = false)
+    private Long version;
 }
