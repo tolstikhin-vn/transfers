@@ -18,6 +18,8 @@ public interface AccountService {
     GetAccountResponse getAccountInfo(String accountNumber);
 
     DeleteAccountResponse deleteAccount(String accountNumber);
+
     GetBalanceResponse getBalance(String accountNumber);
+
     UpdateBalanceResponse updateBalance(String accountNumber, UpdateBalanceRequest updateBalanceRequest);
 }
