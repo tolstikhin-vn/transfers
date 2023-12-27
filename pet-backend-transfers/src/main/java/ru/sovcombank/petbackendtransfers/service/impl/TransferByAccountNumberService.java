@@ -1,18 +1,19 @@
 package ru.sovcombank.petbackendtransfers.service.impl;
 
-import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.builder.ResponseBuilder;
+import ru.sovcombank.petbackendtransfers.builder.TransferDTOBuilder;
 import ru.sovcombank.petbackendtransfers.client.AccountServiceClient;
-import ru.sovcombank.petbackendtransfers.helper.TransferServiceHelper;
 import ru.sovcombank.petbackendtransfers.model.api.request.MakeTransferByAccountRequest;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MakeTransferResponse;
-import ru.sovcombank.petbackendtransfers.model.enums.TransferResponseMessagesEnum;
-import ru.sovcombank.petbackendtransfers.validator.AccountValidator;
-import ru.sovcombank.petbackendtransfers.validator.UserValidator;
-
-import java.math.BigDecimal;
+import ru.sovcombank.petbackendtransfers.model.dto.TransferDTO;
+import ru.sovcombank.petbackendtransfers.model.entity.Transfer;
+import ru.sovcombank.petbackendtransfers.service.helper.UpdateBalanceServiceHelper;
+import ru.sovcombank.petbackendtransfers.service.validator.AccountValidator;
+import ru.sovcombank.petbackendtransfers.service.validator.UserValidator;
 
 @Service
 public class TransferByAccountNumberService {
@@ -23,21 +24,31 @@ public class TransferByAccountNumberService {
 
     private final AccountServiceClient accountServiceClient;
 
+    private final KafkaTemplate<String, TransferDTO> kafkaTemplate;
+
     private final ResponseBuilder responseBuilder;
 
-    private final TransferServiceHelper transferServiceHelper;
+    private final UpdateBalanceServiceHelper updateBalanceServiceHelper;
+
+    private final TransferDTOBuilder transferDTOBuilder;
+
+    @Value("${kafka.topic.transfers-history-transaction}")
+    private String kafkaTopic;
 
     public TransferByAccountNumberService(
             AccountValidator accountValidator,
             UserValidator userValidator,
-            AccountServiceClient accountServiceClient,
+            AccountServiceClient accountServiceClient, KafkaTemplate<String, TransferDTO> kafkaTemplate,
             ResponseBuilder responseBuilder,
-            TransferServiceHelper transferServiceHelper) {
+            UpdateBalanceServiceHelper updateBalanceServiceHelper,
+            TransferDTOBuilder transferDTOBuilder) {
         this.accountValidator = accountValidator;
         this.userValidator = userValidator;
         this.accountServiceClient = accountServiceClient;
+        this.kafkaTemplate = kafkaTemplate;
         this.responseBuilder = responseBuilder;
-        this.transferServiceHelper = transferServiceHelper;
+        this.updateBalanceServiceHelper = updateBalanceServiceHelper;
+        this.transferDTOBuilder = transferDTOBuilder;
     }
 
     /**
@@ -46,41 +57,42 @@ public class TransferByAccountNumberService {
      * @param makeTransferByAccountRequest Запрос на перевод по номеру счета.
      * @return Ответ с сообщением о выполнении перевода.
      */
-    @Transactional
     public MakeTransferResponse makeTransferByAccount(MakeTransferByAccountRequest makeTransferByAccountRequest) {
-        accountValidator.checkRepeatNumbers(
+        validateTransfer(makeTransferByAccountRequest);
+
+        Transfer transfer = updateBalanceServiceHelper.updateBalance(
+                makeTransferByAccountRequest.getCur(),
+                accountServiceClient.getAccountResponse(makeTransferByAccountRequest.getAccountNumberFrom()),
                 makeTransferByAccountRequest.getAccountNumberFrom(),
                 makeTransferByAccountRequest.getAccountNumberTo(),
-                TransferResponseMessagesEnum.BAD_REQUEST_FOR_ACCOUNT_NUMBER.getMessage());
+                makeTransferByAccountRequest.getAmount());
+
+        kafkaTemplate.send(kafkaTopic, transferDTOBuilder.createTransferDTOObject(
+                transfer,
+                accountServiceClient.getAccountResponse(makeTransferByAccountRequest.getAccountNumberFrom()).getClientId(),
+                responseBuilder.getValidateGetAccountResponse(makeTransferByAccountRequest.getAccountNumberTo()).getClientId()));
+
+        return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(
+                makeTransferByAccountRequest.getAccountNumberFrom()).getBalance());
+    }
+
+    // Валидация данных для осуществления перевода
+    private void validateTransfer(MakeTransferByAccountRequest makeTransferByAccountRequest) {
+        accountValidator.checkRepeatNumbers(
+                makeTransferByAccountRequest.getAccountNumberFrom(),
+                makeTransferByAccountRequest.getAccountNumberTo());
 
         userValidator.validateUserForTransferByAccount(makeTransferByAccountRequest.getClientId());
 
         String accountNumberFrom = makeTransferByAccountRequest.getAccountNumberFrom();
-
         GetAccountResponse getAccountFromResponse = accountServiceClient.getAccountResponse(accountNumberFrom);
 
-        String cur = makeTransferByAccountRequest.getCur();
         accountValidator.validateAccountForTransfer(getAccountFromResponse);
-        accountValidator.validateCur(cur, getAccountFromResponse.getCur());
-
-        BigDecimal transferAmount = makeTransferByAccountRequest.getAmount();
-        accountValidator.validateSufficientFunds(accountNumberFrom, transferAmount);
+        accountValidator.validateCur(makeTransferByAccountRequest.getCur(), getAccountFromResponse.getCur());
 
         String accountNumberTo = makeTransferByAccountRequest.getAccountNumberTo();
         GetAccountResponse getAccountToResponse = responseBuilder.getValidateGetAccountResponse(accountNumberTo);
 
         userValidator.validateUserForTransferByAccount(getAccountToResponse.getClientId());
-
-        transferServiceHelper.updateBalance(cur, getAccountToResponse, accountNumberFrom, accountNumberTo, transferAmount);
-
-        transferServiceHelper.saveAndSendTransfer(
-                getAccountFromResponse.getClientId(),
-                getAccountToResponse.getClientId(),
-                accountNumberFrom,
-                accountNumberTo,
-                transferAmount,
-                cur);
-
-        return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(accountNumberFrom).getBalance());
     }
 }

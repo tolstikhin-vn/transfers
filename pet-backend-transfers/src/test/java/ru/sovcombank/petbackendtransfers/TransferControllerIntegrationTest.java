@@ -186,6 +186,9 @@ public class TransferControllerIntegrationTest {
                         "response/get-balance-response.json",
                         GetBalanceResponse.class));
 
+        when(userServiceClient.checkUserExistsForTransferByAccount(anyString()))
+                .thenReturn(true);
+
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
                 BASE_HOST + port + "/transfers",
                 requestMap,
