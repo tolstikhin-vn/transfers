@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendtransfers.validator;
+package ru.sovcombank.petbackendtransfers.service.validator;
 
 import org.springframework.stereotype.Component;
 import ru.sovcombank.petbackendtransfers.client.UserServiceClient;

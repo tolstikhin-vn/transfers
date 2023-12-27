@@ -20,7 +20,7 @@ import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
 import ru.sovcombank.petbackendusers.model.entity.User;
 import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
 import ru.sovcombank.petbackendusers.repository.UserRepository;
-import ru.sovcombank.petbackendusers.service.builder.UserService;
+import ru.sovcombank.petbackendusers.service.UserService;
 
 import java.util.Optional;
 

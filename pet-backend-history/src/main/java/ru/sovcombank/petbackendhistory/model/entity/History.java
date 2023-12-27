@@ -26,6 +26,12 @@ public class History {
     private String accountNumberFrom;
 
     @Column(nullable = false)
+    private String clientIdFrom;
+
+    @Column(nullable = false)
+    private String clientIdTo;
+
+    @Column(nullable = false)
     private String accountNumberTo;
 
     @Column(nullable = false)

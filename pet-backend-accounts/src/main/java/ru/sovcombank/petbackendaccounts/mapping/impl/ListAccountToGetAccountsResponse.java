@@ -1,6 +1,5 @@
 package ru.sovcombank.petbackendaccounts.mapping.impl;
 
-import lombok.Data;
 import org.springframework.stereotype.Component;
 import ru.sovcombank.petbackendaccounts.mapping.builder.Mapper;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
@@ -10,7 +9,6 @@ import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import java.util.List;
 
 @Component
-@Data
 public class ListAccountToGetAccountsResponse implements Mapper<List<Account>, GetAccountsResponse> {
 
     private final Mapper<Account, AccountDTO> accountToAccountDTO;

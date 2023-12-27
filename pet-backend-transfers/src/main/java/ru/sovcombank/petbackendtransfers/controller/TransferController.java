@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MakeTransferResponse;
-import ru.sovcombank.petbackendtransfers.service.builder.TransferService;
+import ru.sovcombank.petbackendtransfers.service.TransferService;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class TransferController {
      * @param requestMap Запрос на создание перевода.
      * @return Ответ с результатом выполнения перевода.
      */
-    @PostMapping("/new")
+    @PostMapping()
     public ResponseEntity<MakeTransferResponse> makeTransfer(@RequestBody Map<String, Object> requestMap) {
         MakeTransferResponse makeTransferResponse = transferService.makeTransfer(requestMap);
         return ResponseEntity.ok(makeTransferResponse);

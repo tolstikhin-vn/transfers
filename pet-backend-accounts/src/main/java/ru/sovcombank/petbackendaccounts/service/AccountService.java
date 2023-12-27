@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendaccounts.service.builder;
+package ru.sovcombank.petbackendaccounts.service;
 
 import ru.sovcombank.petbackendaccounts.model.api.request.CreateAccountRequest;
 import ru.sovcombank.petbackendaccounts.model.api.request.UpdateBalanceRequest;

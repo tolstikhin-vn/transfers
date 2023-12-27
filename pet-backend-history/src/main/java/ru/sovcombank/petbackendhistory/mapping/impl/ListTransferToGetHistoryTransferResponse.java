@@ -14,6 +14,7 @@ import java.util.List;
 public class ListTransferToGetHistoryTransferResponse implements Mapper<List<History>, GetTransferHistoryResponse> {
 
     private final Mapper<History, HistoryDTO> historyToHistoryDTO;
+
     private String clientId;
 
     public ListTransferToGetHistoryTransferResponse(Mapper<History, HistoryDTO> historyToHistoryDTO) {

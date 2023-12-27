@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendtransfers.validator;
+package ru.sovcombank.petbackendtransfers.service.validator;
 
 import org.springframework.stereotype.Component;
 import ru.sovcombank.petbackendtransfers.client.AccountServiceClient;
@@ -42,9 +42,9 @@ public class AccountValidator {
     }
 
     // Проверка на перевод самому себе
-    public void checkRepeatNumbers(String numberFrom, String numberTo, String message) {
+    public void checkRepeatNumbers(String numberFrom, String numberTo) {
         if (numberTo.equals(numberFrom)) {
-            throw new BadRequestException(message);
+            throw new BadRequestException(TransferResponseMessagesEnum.BAD_REQUEST_FOR_ACCOUNT_NUMBER.getMessage());
         }
     }
 }

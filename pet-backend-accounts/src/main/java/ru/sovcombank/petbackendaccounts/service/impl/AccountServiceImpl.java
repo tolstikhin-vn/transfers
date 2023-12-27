@@ -22,7 +22,7 @@ import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
 import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
-import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
+import ru.sovcombank.petbackendaccounts.service.AccountService;
 
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +108,7 @@ public class AccountServiceImpl implements AccountService {
     // Проверяет, имеет ли клиент не менее одного счета.
     private boolean hasMoreThenOneAccount(String clientId) {
         Optional<List<Account>> existingAccounts = accountRepository.findByClientId(Integer.valueOf(clientId));
-        return existingAccounts.filter(accounts -> accounts.size() >= 1).isPresent();
+        return existingAccounts.filter(accounts -> !accounts.isEmpty()).isPresent();
     }
 
     /**
@@ -125,8 +125,6 @@ public class AccountServiceImpl implements AccountService {
 
         List<Account> accounts = accountRepository.findByClientId(Integer.parseInt(clientId))
                 .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));
-
-        listAccountToGetAccountsResponse.setClientId(clientId);
 
         return listAccountToGetAccountsResponse.map(accounts);
     }

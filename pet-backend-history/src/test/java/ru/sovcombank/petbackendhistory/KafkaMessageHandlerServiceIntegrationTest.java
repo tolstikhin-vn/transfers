@@ -94,8 +94,9 @@ public class KafkaMessageHandlerServiceIntegrationTest {
 
     @Test
     void testHandleMessage() throws InterruptedException, IOException {
-        String jsonMessage = "{\"uuid\":\"87e91d0e-752f-43bc-800b-6b0d992a8c81\",\"accountNumberFrom\":\"4200933666961739\"," +
-                "\"accountNumberTo\":\"4200810666632677\",\"amount\":\"100.00\",\"cur\":\"810\",\"transactionDateTime\":\"2023-12-13T18:25:25\"}";
+        String jsonMessage = "{\"uuid\":\"87e91d0e-752f-43bc-800b-6b0d992a8c81\",\"clientIdFrom\":\"1\",\"clientIdTo\":\"2\","
+                + "\"accountNumberFrom\":\"4200933666961739\",\"accountNumberTo\":\"4200810666632677\",\"amount\":\"100.00\","
+                + "\"cur\":\"810\",\"transactionDateTime\":\"2023-12-13T18:25:25\"}";
 
         messageHandlerService.handleMessage(jsonMessage);
         latch.await(5, TimeUnit.SECONDS);

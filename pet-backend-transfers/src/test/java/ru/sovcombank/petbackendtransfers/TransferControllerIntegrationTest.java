@@ -32,7 +32,7 @@ import ru.sovcombank.petbackendtransfers.model.api.response.GetTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MakeTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MessageResponse;
-import ru.sovcombank.petbackendtransfers.model.entity.Transfer;
+import ru.sovcombank.petbackendtransfers.model.dto.TransferDTO;
 import ru.sovcombank.petbackendtransfers.model.enums.TransferResponseMessagesEnum;
 
 import java.io.IOException;
@@ -71,7 +71,7 @@ public class TransferControllerIntegrationTest {
     private AccountServiceClient accountServiceClient;
 
     @MockBean
-    private KafkaTemplate<String, Transfer> kafkaTemplate;
+    private KafkaTemplate<String, TransferDTO> kafkaTemplate;
 
     @Value("${kafka.topic.transfers-history-transaction}")
     private String expectedKafkaTopic;
@@ -109,12 +109,12 @@ public class TransferControllerIntegrationTest {
                 "response/make-transfer-response.json",
                 MakeTransferResponse.class);
 
-        Transfer expectedTransfer = readFromJson(
+        TransferDTO expectedTransfer = readFromJson(
                 "entity/make-transfer-entity.json",
-                Transfer.class);
+                TransferDTO.class);
 
         ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Transfer> transferCaptor = ArgumentCaptor.forClass(Transfer.class);
+        ArgumentCaptor<TransferDTO> transferCaptor = ArgumentCaptor.forClass(TransferDTO.class);
 
         when(userServiceClient.checkUserExistsForTransferByAccount(anyString()))
                 .thenReturn(true);
@@ -130,7 +130,7 @@ public class TransferControllerIntegrationTest {
                         GetBalanceResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -143,7 +143,7 @@ public class TransferControllerIntegrationTest {
         verify(kafkaTemplate).send(topicCaptor.capture(), transferCaptor.capture());
 
         String actualTopic = topicCaptor.getValue();
-        Transfer actualTransfer = transferCaptor.getValue();
+        TransferDTO actualTransfer = transferCaptor.getValue();
 
         expectedTransfer.setUuid(actualTransfer.getUuid());
         expectedTransfer.setTransactionDateTime(actualTransfer.getTransactionDateTime());
@@ -186,8 +186,11 @@ public class TransferControllerIntegrationTest {
                         "response/get-balance-response.json",
                         GetBalanceResponse.class));
 
+        when(userServiceClient.checkUserExistsForTransferByAccount(anyString()))
+                .thenReturn(true);
+
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -206,7 +209,7 @@ public class TransferControllerIntegrationTest {
                 Map.class);
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -237,7 +240,7 @@ public class TransferControllerIntegrationTest {
                         GetAccountResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -268,7 +271,7 @@ public class TransferControllerIntegrationTest {
                         GetAccountResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 
@@ -299,7 +302,7 @@ public class TransferControllerIntegrationTest {
                         GetAccountResponse.class));
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/transfers/new",
+                BASE_HOST + port + "/transfers",
                 requestMap,
                 MakeTransferResponse.class);
 

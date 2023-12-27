@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.sovcombank.petbackendhistory.model.api.response.GetTransferHistoryResponse;
-import ru.sovcombank.petbackendhistory.service.builder.HistoryService;
+import ru.sovcombank.petbackendhistory.service.HistoryService;
 
 
 /**
