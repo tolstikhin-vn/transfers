@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendtransfers.mapping.builder;
+package ru.sovcombank.petbackendtransfers.mapping;
 
 import java.util.Collection;
 

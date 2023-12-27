@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.sovcombank.petbackendtransfers.exception.AccountNotFoundException;
+import ru.sovcombank.petbackendtransfers.exception.BadRequestException;
+import ru.sovcombank.petbackendtransfers.exception.InsufficientFundsException;
 import ru.sovcombank.petbackendtransfers.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendtransfers.exception.UserNotFoundException;
 import ru.sovcombank.petbackendtransfers.mapping.impl.ResponseToGetAccountResponse;
@@ -81,6 +83,8 @@ public class AccountServiceClient {
 
         try {
             restTemplate.exchange(updateBalanceUrl, HttpMethod.PUT, new HttpEntity<>(updateBalanceRequest), Object.class);
+        } catch (BadRequestException ex) {
+            throw new InsufficientFundsException(TransferResponseMessagesEnum.INSUFFICIENT_FUNDS.getMessage());
         } catch (Exception ex) {
             throw new InternalServerErrorException();
         }

@@ -1,7 +1,7 @@
 package ru.sovcombank.petbackendusers.mapping.impl;
 
 import org.springframework.stereotype.Component;
-import ru.sovcombank.petbackendusers.mapping.builder.Mapper;
+import ru.sovcombank.petbackendusers.mapping.Mapper;
 import ru.sovcombank.petbackendusers.model.api.request.UpdateUserRequest;
 import ru.sovcombank.petbackendusers.model.entity.User;
 
