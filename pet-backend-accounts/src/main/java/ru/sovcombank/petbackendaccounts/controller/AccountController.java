@@ -54,6 +54,7 @@ public class AccountController {
     @GetMapping("/{clientId}")
     public ResponseEntity<Object> getAccountsByClientId(@PathVariable String clientId) {
         GetAccountsResponse response = accountService.getAccounts(clientId);
+        response.setClientId(clientId);
         return ResponseEntity.ok(response);
     }
 

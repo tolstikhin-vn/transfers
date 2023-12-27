@@ -39,9 +39,9 @@ public class Account {
     @Column(nullable = false)
     private LocalDateTime createDateTime = LocalDateTime.now();
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private boolean isMain = true;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private boolean isClosed = false;
 }

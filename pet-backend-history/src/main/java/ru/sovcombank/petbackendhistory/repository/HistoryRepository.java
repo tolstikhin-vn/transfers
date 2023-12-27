@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface HistoryRepository extends JpaRepository<History, UUID> {
 
     @Query("SELECT h FROM history h WHERE h.clientIdFrom = :clientId OR h.clientIdTo = :clientId")
-    List<History> findByClientId(@Param("clientId") Integer clientId);
+    List<History> findByClientId(@Param("clientId") String clientId);
 }
