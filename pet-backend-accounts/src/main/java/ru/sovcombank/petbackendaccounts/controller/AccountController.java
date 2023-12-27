@@ -14,10 +14,11 @@ import ru.sovcombank.petbackendaccounts.model.api.request.CreateAccountRequest;
 import ru.sovcombank.petbackendaccounts.model.api.request.UpdateBalanceRequest;
 import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
-import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
+import ru.sovcombank.petbackendaccounts.service.AccountService;
 
 /**
  * Контроллер для управления счетами.
@@ -38,8 +39,8 @@ public class AccountController {
      * @param createAccountRequest Запрос на создание счета.
      * @return Ответ с результатом создания счета.
      */
-    @PostMapping("/new")
-    public ResponseEntity<Object> createUser(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
+    @PostMapping()
+    public ResponseEntity<Object> createAccount(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
         CreateAccountResponse response = accountService.createAccount(createAccountRequest);
         return ResponseEntity.ok(response);
     }
@@ -53,6 +54,20 @@ public class AccountController {
     @GetMapping("/{clientId}")
     public ResponseEntity<Object> getAccountsByClientId(@PathVariable String clientId) {
         GetAccountsResponse response = accountService.getAccounts(clientId);
+        response.setClientId(clientId);
+        return ResponseEntity.ok(response);
+    }
+
+
+    /**
+     * Обрабатывает запрос на получение информации о счете по номеру счета.
+     *
+     * @param accountNumber Идентификатор клиента.
+     * @return Ответ с информацией о счетах.
+     */
+    @GetMapping("/account/{accountNumber}")
+    public ResponseEntity<Object> getAccountByAccountNumber(@PathVariable String accountNumber) {
+        GetAccountResponse response = accountService.getAccountInfo(accountNumber);
         return ResponseEntity.ok(response);
     }
 
@@ -88,7 +103,7 @@ public class AccountController {
      * @return Ответ с результатом изменения баланса.
      */
     @PutMapping("/balance/{accountNumber}")
-    public ResponseEntity<Object> updateUser(@PathVariable String accountNumber, @Valid @RequestBody UpdateBalanceRequest updateBalanceRequest) {
+    public ResponseEntity<Object> updateBalance(@PathVariable String accountNumber, @Valid @RequestBody UpdateBalanceRequest updateBalanceRequest) {
         UpdateBalanceResponse response = accountService.updateBalance(accountNumber, updateBalanceRequest);
         return ResponseEntity.ok(response);
     }

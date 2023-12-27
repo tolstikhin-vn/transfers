@@ -28,7 +28,7 @@ import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.MessageResponse;
 import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
 import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
-import ru.sovcombank.petbackendusers.service.builder.UserService;
+import ru.sovcombank.petbackendusers.service.UserService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,7 +88,7 @@ public class UserControllerIntegrationTest {
                 CreateUserRequest.class);
 
         ResponseEntity<CreateUserResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/users/new",
+                BASE_HOST + port + "/users",
                 createUserRequest,
                 CreateUserResponse.class);
 
@@ -113,13 +113,13 @@ public class UserControllerIntegrationTest {
         userService.createUser(createUserRequest);
 
         ResponseEntity<MessageResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/users/new",
+                BASE_HOST + port + "/users",
                 createUserRequest,
                 MessageResponse.class);
 
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
-        assertEquals(createUserRequest.getPhoneNumber() + " с таким phone_number уже зарегистрирован",
+        assertEquals(createUserRequest.getPhoneNumber() + " с таким phoneNumber уже зарегистрирован",
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
 
@@ -130,14 +130,14 @@ public class UserControllerIntegrationTest {
                 "request/create-user-request.json",
                 CreateUserRequest.class);
 
+        GetUserResponse expectedResponse = readFromJson(
+                "response/get-user-response.json",
+                GetUserResponse.class);
+
         userService.createUser(createUserRequest);
 
         ResponseEntity<GetUserResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/users/1",
-                GetUserResponse.class);
-
-        GetUserResponse expectedResponse = readFromJson(
-                "response/get-user-response.json",
                 GetUserResponse.class);
 
         GetUserResponse actualResponse = responseEntity.getBody();
@@ -168,14 +168,14 @@ public class UserControllerIntegrationTest {
                 "request/create-user-request.json",
                 CreateUserRequest.class);
 
+        GetUserResponse expectedResponse = readFromJson(
+                "response/get-user-response.json",
+                GetUserResponse.class);
+
         userService.createUser(createUserRequest);
 
         ResponseEntity<GetUserResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/users/phone-number/" + createUserRequest.getPhoneNumber(),
-                GetUserResponse.class);
-
-        GetUserResponse expectedResponse = readFromJson(
-                "response/get-user-response.json",
                 GetUserResponse.class);
 
         GetUserResponse actualResponse = responseEntity.getBody();
@@ -206,11 +206,11 @@ public class UserControllerIntegrationTest {
                 "request/create-user-request.json",
                 CreateUserRequest.class);
 
-        CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
-
         UpdateUserRequest updateUserRequest = readFromJson(
                 "request/update-user-request.json",
                 UpdateUserRequest.class);
+
+        CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
 
         ResponseEntity<UpdateUserResponse> responseEntity = restTemplate.exchange(
                 BASE_HOST + port + "/users/" + createUserResponse.getClientId(),

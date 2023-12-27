@@ -16,7 +16,7 @@ import ru.sovcombank.petbackendusers.model.api.response.CreateUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.DeleteUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendusers.model.api.response.UpdateUserResponse;
-import ru.sovcombank.petbackendusers.service.builder.UserService;
+import ru.sovcombank.petbackendusers.service.UserService;
 
 /**
  * Контроллер для управления пользователями.
@@ -37,7 +37,7 @@ public class UserController {
      * @param createUserRequest Запрос на создание клиента.
      * @return Ответ с результатом создания клиента.
      */
-    @PostMapping("/new")
+    @PostMapping()
     public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
         CreateUserResponse response = userService.createUser(createUserRequest);
         return ResponseEntity.ok(response);

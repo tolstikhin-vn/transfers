@@ -32,7 +32,7 @@ import ru.sovcombank.petbackendaccounts.model.api.response.MessageResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.dto.AccountDTO;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
-import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
+import ru.sovcombank.petbackendaccounts.service.AccountService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,7 +101,7 @@ public class AccountControllerIntegrationTest {
         when(userServiceClient.checkUserExists(createAccountRequest.getClientId())).thenReturn(ResponseEntity.ok().build());
 
         ResponseEntity<CreateAccountResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/accounts/new",
+                BASE_HOST + port + "/accounts",
                 createAccountRequest,
                 CreateAccountResponse.class);
 
@@ -126,7 +126,7 @@ public class AccountControllerIntegrationTest {
         when(userServiceClient.checkUserExists(createAccountRequest.getClientId())).thenReturn(ResponseEntity.ok().build());
 
         ResponseEntity<CreateAccountResponse> responseEntity = restTemplate.postForEntity(
-                BASE_HOST + port + "/accounts/new",
+                BASE_HOST + port + "/accounts",
                 createAccountRequest,
                 CreateAccountResponse.class);
 
@@ -144,20 +144,20 @@ public class AccountControllerIntegrationTest {
                 "request/create-account-request.json",
                 CreateAccountRequest.class);
 
-        when(userServiceClient.checkUserExists(createAccountRequest.getClientId())).thenReturn(ResponseEntity.ok().build());
-
         accountService.createAccount(createAccountRequest);
+
+        when(userServiceClient.checkUserExists(createAccountRequest.getClientId())).thenReturn(ResponseEntity.ok().build());
 
         ResponseEntity<GetAccountsResponse> responseEntity = restTemplate.getForEntity(
                 BASE_HOST + port + "/accounts/1",
                 GetAccountsResponse.class);
 
+        AccountDTO actualAccountDTO = responseEntity.getBody().getAccountNumbers().get(0);
+
         int actualAccountsListSize = Objects.requireNonNull(responseEntity.getBody()).getAccountNumbers().size();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
         assertEquals(1, actualAccountsListSize);
-
-        AccountDTO actualAccountDTO = responseEntity.getBody().getAccountNumbers().get(0);
 
         assertNotNull(actualAccountDTO.getAccountNumber());
         assertEquals(createAccountRequest.getCur(), actualAccountDTO.getCur());
@@ -241,11 +241,11 @@ public class AccountControllerIntegrationTest {
                 "request/create-account-request.json",
                 CreateAccountRequest.class);
 
-        CreateAccountResponse createAccountResponse = accountService.createAccount(createAccountRequest);
-
         UpdateBalanceRequest updateBalanceRequest = readFromJson(
                 "request/update-balance-request.json",
                 UpdateBalanceRequest.class);
+
+        CreateAccountResponse createAccountResponse = accountService.createAccount(createAccountRequest);
 
         ResponseEntity<UpdateBalanceResponse> responseEntity = restTemplate.exchange(
                 BASE_HOST + port + "/accounts/balance/" + createAccountResponse.getAccountNumber(),

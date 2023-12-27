@@ -2,16 +2,19 @@ package ru.sovcombank.petbackendaccounts.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sovcombank.petbackendaccounts.builder.ResponseBuilder;
 import ru.sovcombank.petbackendaccounts.client.UserServiceClient;
 import ru.sovcombank.petbackendaccounts.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendaccounts.exception.BadRequestException;
 import ru.sovcombank.petbackendaccounts.exception.UserNotFoundException;
+import ru.sovcombank.petbackendaccounts.mapping.impl.AccountToGetAccountResponse;
 import ru.sovcombank.petbackendaccounts.mapping.impl.CreateAccountRequestToAccount;
 import ru.sovcombank.petbackendaccounts.mapping.impl.ListAccountToGetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.request.CreateAccountRequest;
 import ru.sovcombank.petbackendaccounts.model.api.request.UpdateBalanceRequest;
 import ru.sovcombank.petbackendaccounts.model.api.response.CreateAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.DeleteAccountResponse;
+import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetAccountsResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.GetBalanceResponse;
 import ru.sovcombank.petbackendaccounts.model.api.response.UpdateBalanceResponse;
@@ -19,7 +22,7 @@ import ru.sovcombank.petbackendaccounts.model.entity.Account;
 import ru.sovcombank.petbackendaccounts.model.enums.AccountResponseMessagesEnum;
 import ru.sovcombank.petbackendaccounts.model.enums.TypePaymentsEnum;
 import ru.sovcombank.petbackendaccounts.repository.AccountRepository;
-import ru.sovcombank.petbackendaccounts.service.builder.AccountService;
+import ru.sovcombank.petbackendaccounts.service.AccountService;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,17 +37,23 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final ListAccountToGetAccountsResponse listAccountToGetAccountsResponse;
     private final CreateAccountRequestToAccount createAccountRequestToAccount;
+    private final AccountToGetAccountResponse accountToGetAccountResponse;
     private final UserServiceClient userServiceClient;
+    private final ResponseBuilder responseBuilder;
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
                               CreateAccountRequestToAccount createAccountRequestToAccount,
-                              UserServiceClient userServiceClient) {
+                              AccountToGetAccountResponse accountToGetAccountResponse,
+                              UserServiceClient userServiceClient,
+                              ResponseBuilder responseBuilder) {
         this.accountRepository = accountRepository;
         this.listAccountToGetAccountsResponse = listAccountToGetAccountsResponse;
         this.createAccountRequestToAccount = createAccountRequestToAccount;
+        this.accountToGetAccountResponse = accountToGetAccountResponse;
         this.userServiceClient = userServiceClient;
+        this.responseBuilder = responseBuilder;
     }
 
     /**
@@ -60,6 +69,7 @@ public class AccountServiceImpl implements AccountService {
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
         String clientId = createAccountRequest.getClientId();
+
         // Проверка существования клиента с таким clientId
         userServiceClient.checkUserExists(clientId);
 
@@ -78,10 +88,27 @@ public class AccountServiceImpl implements AccountService {
 
             Account createdAccount = accountRepository.save(accountEntity);
 
-            return buildCreateAccountResponse(createdAccount);
+            return responseBuilder.buildCreateAccountResponse(createdAccount);
         } else {
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage());
         }
+    }
+
+    // Генерирует уникальный номер счета на основе валюты.
+    private String generateAccountNumber(String cur) {
+        return String.format("4200%s666%06d", cur, new Random().nextInt(1000000));
+    }
+
+    // Проверяет, достигнуто ли максимальное количество счетов для указанной валюты у данного клиента.
+    private boolean hasMaxAccountsForCurrency(String clientId, String cur) {
+        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(Integer.valueOf(clientId), cur);
+        return existingAccounts.size() >= MAX_ACCOUNTS_PER_CURRENCY;
+    }
+
+    // Проверяет, имеет ли клиент не менее одного счета.
+    private boolean hasMoreThenOneAccount(String clientId) {
+        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(Integer.valueOf(clientId));
+        return existingAccounts.filter(accounts -> !accounts.isEmpty()).isPresent();
     }
 
     /**
@@ -99,9 +126,16 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accounts = accountRepository.findByClientId(Integer.parseInt(clientId))
                 .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));
 
-        listAccountToGetAccountsResponse.setClientId(clientId);
-
         return listAccountToGetAccountsResponse.map(accounts);
+    }
+
+
+    @Override
+    public GetAccountResponse getAccountInfo(String accountNumber) {
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage()));
+
+        return accountToGetAccountResponse.map(account);
     }
 
     /**
@@ -162,30 +196,14 @@ public class AccountServiceImpl implements AccountService {
         // Проверяем существование клиента по переданному идентификатору
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
         if (accountOptional.isPresent()) {
-            Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
-            accountRepository.save(changedAccount);
+            if (!accountOptional.get().isClosed()) {
+                Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
+                accountRepository.save(changedAccount);
 
-            return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
-        } else {
-            throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+                return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+            }
         }
-    }
-
-    // Генерирует уникальный номер счета на основе валюты.
-    private String generateAccountNumber(String cur) {
-        return String.format("4200%s666%06d", cur, new Random().nextInt(1000000));
-    }
-
-    // Проверяет, достигнуто ли максимальное количество счетов для указанной валюты у данного клиента.
-    private boolean hasMaxAccountsForCurrency(String clientId, String cur) {
-        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(Integer.valueOf(clientId), cur);
-        return existingAccounts.size() >= MAX_ACCOUNTS_PER_CURRENCY;
-    }
-
-    // Проверяет, имеет ли клиент не менее одного счета.
-    private boolean hasMoreThenOneAccount(String clientId) {
-        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(Integer.valueOf(clientId));
-        return existingAccounts.filter(accounts -> accounts.size() >= 1).isPresent();
+        throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
     }
 
     // Совершает операцию пополнения/снятия исходя из запроса.
@@ -205,12 +223,5 @@ public class AccountServiceImpl implements AccountService {
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_TYPE_PAY.getMessage());
         }
         return account;
-    }
-
-    private CreateAccountResponse buildCreateAccountResponse(Account createdAccount) {
-        CreateAccountResponse createAccountResponse = new CreateAccountResponse();
-        createAccountResponse.setAccountNumber(createdAccount.getAccountNumber());
-        createAccountResponse.setMessage(AccountResponseMessagesEnum.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
-        return createAccountResponse;
     }
 }

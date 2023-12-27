@@ -19,11 +19,10 @@ public class KafkaMessageHandlerService {
         this.mapper = mapper;
     }
 
-    @KafkaListener(topics = "transfers-history-transaction", groupId = "history-group")
+    @KafkaListener(topics = "${kafka.topic.transfers-history-transaction}", groupId = "${kafka.topic.history-group}")
     public void handleMessage(String jsonMessage) {
         try {
             History history = mapper.readValue(jsonMessage, History.class);
-
             historyRepository.save(history);
         } catch (JsonProcessingException ex) {
             throw new InternalServerErrorException(ex);

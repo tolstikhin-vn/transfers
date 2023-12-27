@@ -43,7 +43,7 @@ public class CurrencyConverter {
         try {
             return parseExchangeRate(getXmlResponse(), cur);
         } catch (Exception ex) {
-            throw new InternalServerErrorException(ex);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -59,7 +59,7 @@ public class CurrencyConverter {
         try {
             return responseEntity.getBody();
         } catch (Exception ex) {
-            throw new InternalServerErrorException(ex);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -92,7 +92,7 @@ public class CurrencyConverter {
             }
             throw new BadRequestException(TransferResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
-            throw new InternalServerErrorException(ex);
+            throw new InternalServerErrorException();
         }
     }
 }

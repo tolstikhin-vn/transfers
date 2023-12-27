@@ -3,7 +3,9 @@ package ru.sovcombank.petbackendtransfers.client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import ru.sovcombank.petbackendtransfers.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendtransfers.exception.UserNotFoundException;
 import ru.sovcombank.petbackendtransfers.mapping.impl.ResponseToGetUserResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetUserResponse;
@@ -51,10 +53,14 @@ public class UserServiceClient {
     public boolean checkUserExistsForTransferByAccount(String clientId) {
         String getUserByIdUrl = userServiceUrl + "/users/" + clientId;
 
-        ResponseEntity<Object> responseEntity = getResponseEntity(getUserByIdUrl);
-        if (!responseEntity.getStatusCode().isError()) {
-            GetUserResponse getUserResponseEntity = responseToGetUserResponse.map(responseEntity);
-            return isUserActiveAndNotDeleted(getUserResponseEntity);
+        try {
+            ResponseEntity<Object> responseEntity = getResponseEntity(getUserByIdUrl);
+            if (!responseEntity.getStatusCode().isError()) {
+                GetUserResponse getUserResponseEntity = responseToGetUserResponse.map(responseEntity);
+                return isUserActiveAndNotDeleted(getUserResponseEntity);
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            return false;
         }
         return false;
     }
@@ -70,11 +76,15 @@ public class UserServiceClient {
     public boolean checkUserExistsForTransferByPhone(String clientId, String phoneNumber) {
         String getUserByIdUrl = userServiceUrl + "/users/" + clientId;
 
-        ResponseEntity<Object> responseEntity = getResponseEntity(getUserByIdUrl);
-        if (!responseEntity.getStatusCode().isError()) {
-            GetUserResponse getUserResponseEntity = responseToGetUserResponse.map(responseEntity);
-            return isUserActiveAndNotDeleted(getUserResponseEntity)
-                    && getUserResponseEntity.getPhoneNumber().equals(phoneNumber);
+        try {
+            ResponseEntity<Object> responseEntity = getResponseEntity(getUserByIdUrl);
+            if (!responseEntity.getStatusCode().isError()) {
+                GetUserResponse getUserResponseEntity = responseToGetUserResponse.map(responseEntity);
+                return isUserActiveAndNotDeleted(getUserResponseEntity)
+                        && getUserResponseEntity.getPhoneNumber().equals(phoneNumber);
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            return false;
         }
         return false;
     }
@@ -89,10 +99,14 @@ public class UserServiceClient {
     public GetUserResponse getUserInfo(String phoneNumber) {
         String getUserByPhoneNumberUrl = userServiceUrl + "/users/phone-number/" + phoneNumber;
 
-        ResponseEntity<Object> responseEntity = getResponseEntity(getUserByPhoneNumberUrl);
-        if (!responseEntity.getStatusCode().isError()) {
-            return responseToGetUserResponse.map(responseEntity);
+        try {
+            ResponseEntity<Object> responseEntity = getResponseEntity(getUserByPhoneNumberUrl);
+            if (!responseEntity.getStatusCode().isError()) {
+                return responseToGetUserResponse.map(responseEntity);
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
         }
-        throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
+        throw new InternalServerErrorException();
     }
 }

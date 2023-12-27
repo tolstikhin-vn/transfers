@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 @Entity(name = "history")
 public class History {
 
@@ -22,6 +24,12 @@ public class History {
 
     @Column(nullable = false)
     private String accountNumberFrom;
+
+    @Column(nullable = false)
+    private String clientIdFrom;
+
+    @Column(nullable = false)
+    private String clientIdTo;
 
     @Column(nullable = false)
     private String accountNumberTo;

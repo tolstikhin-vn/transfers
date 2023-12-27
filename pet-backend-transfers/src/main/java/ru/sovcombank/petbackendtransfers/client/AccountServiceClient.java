@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.sovcombank.petbackendtransfers.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendtransfers.exception.InternalServerErrorException;
@@ -57,12 +58,15 @@ public class AccountServiceClient {
     public GetAccountResponse getAccountResponse(String accountNumber) {
         String getAccountByAccountNumberUrl = accountServiceUrl + "/accounts/account/" + accountNumber;
 
-        ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountByAccountNumberUrl, Object.class);
-        if (!responseEntity.getStatusCode().isError()) {
-            return responseToGetAccountResponse.map(responseEntity);
+        try {
+            ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountByAccountNumberUrl, Object.class);
+            if (!responseEntity.getStatusCode().isError()) {
+                return responseToGetAccountResponse.map(responseEntity);
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new AccountNotFoundException(TransferResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
-
-        throw new AccountNotFoundException(TransferResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+        throw new InternalServerErrorException();
     }
 
     /**
@@ -76,13 +80,9 @@ public class AccountServiceClient {
         String updateBalanceUrl = accountServiceUrl + "/accounts/balance/" + accountNumber;
 
         try {
-            restTemplate.exchange(
-                    updateBalanceUrl,
-                    HttpMethod.PUT,
-                    new HttpEntity<>(updateBalanceRequest),
-                    Object.class);
+            restTemplate.exchange(updateBalanceUrl, HttpMethod.PUT, new HttpEntity<>(updateBalanceRequest), Object.class);
         } catch (Exception ex) {
-            throw new InternalServerErrorException(ex);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -96,11 +96,15 @@ public class AccountServiceClient {
     public GetAccountsResponse getAccountsResponse(String clientId) {
         String getAccountsUrl = accountServiceUrl + "/accounts/" + clientId;
 
-        ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountsUrl, Object.class);
-        if (!responseEntity.getStatusCode().isError()) {
-            return responseToGetAccountsResponse.map(responseEntity);
+        try {
+            ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountsUrl, Object.class);
+            if (!responseEntity.getStatusCode().isError()) {
+                return responseToGetAccountsResponse.map(responseEntity);
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
         }
-        throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
+        throw new InternalServerErrorException();
     }
 
     /**
@@ -113,10 +117,14 @@ public class AccountServiceClient {
     public GetBalanceResponse getBalanceResponse(String accountNumber) {
         String getAccountsUrl = accountServiceUrl + "/accounts/balance/" + accountNumber;
 
-        ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountsUrl, Object.class);
-        if (!responseEntity.getStatusCode().isError()) {
-            return responseToGetBalanceResponse.map(responseEntity);
+        try {
+            ResponseEntity<Object> responseEntity = restTemplate.getForEntity(getAccountsUrl, Object.class);
+            if (!responseEntity.getStatusCode().isError()) {
+                return responseToGetBalanceResponse.map(responseEntity);
+            }
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new AccountNotFoundException(TransferResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
-        throw new AccountNotFoundException(TransferResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+        throw new InternalServerErrorException();
     }
 }
