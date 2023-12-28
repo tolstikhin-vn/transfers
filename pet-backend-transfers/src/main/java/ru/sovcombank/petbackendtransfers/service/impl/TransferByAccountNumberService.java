@@ -74,7 +74,7 @@ public class TransferByAccountNumberService implements TransferStrategy {
 
         Transfer transfer = updateBalanceServiceHelper.updateBalance(
                 makeTransferByAccountRequest.getCur(),
-                accountServiceClient.getAccountResponse(makeTransferByAccountRequest.getAccountNumberFrom()),
+                accountServiceClient.getAccountResponse(makeTransferByAccountRequest.getAccountNumberTo()),
                 makeTransferByAccountRequest.getAccountNumberFrom(),
                 makeTransferByAccountRequest.getAccountNumberTo(),
                 makeTransferByAccountRequest.getAmount());

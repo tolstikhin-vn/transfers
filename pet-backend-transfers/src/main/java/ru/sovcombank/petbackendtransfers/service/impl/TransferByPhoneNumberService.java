@@ -86,8 +86,9 @@ public class TransferByPhoneNumberService implements TransferStrategy {
 
         Transfer transfer = updateBalanceServiceHelper.updateBalance(
                 makeTransferByPhoneRequest.getCur(),
-                responseBuilder.getAccountResponse(getMainAccountServiceHelper.getMainAccount(responseBuilder.getAccountsResponse(
-                        makeTransferByPhoneRequest.getClientId()).getAccountList())),
+                responseBuilder.getAccountResponse(getMainAccountServiceHelper.getMainAccount(responseBuilder
+                        .getAccountsResponse(getClientId(makeTransferByPhoneRequest))
+                        .getAccountList())),
                 getMainAccountFrom(makeTransferByPhoneRequest),
                 getMainAccountTo(makeTransferByPhoneRequest),
                 makeTransferByPhoneRequest.getAmount());
@@ -133,5 +134,9 @@ public class TransferByPhoneNumberService implements TransferStrategy {
         return getMainAccountServiceHelper.getMainAccount(responseBuilder.getAccountsResponse(
                         Integer.toString(userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId()))
                 .getAccountList());
+    }
+
+    private String getClientId(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        return String.valueOf(userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId());
     }
 }
