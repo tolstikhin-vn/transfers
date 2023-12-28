@@ -47,6 +47,5 @@ public class Account {
     private boolean isClosed = false;
 
     @Version
-    @Column(nullable = false)
     private Long version;
 }

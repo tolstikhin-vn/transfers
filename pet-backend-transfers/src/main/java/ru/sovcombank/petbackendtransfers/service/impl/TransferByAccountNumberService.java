@@ -6,17 +6,21 @@ import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.builder.ResponseBuilder;
 import ru.sovcombank.petbackendtransfers.builder.TransferDTOBuilder;
 import ru.sovcombank.petbackendtransfers.client.AccountServiceClient;
+import ru.sovcombank.petbackendtransfers.mapping.impl.MapToMakeTransferByAccountRequest;
 import ru.sovcombank.petbackendtransfers.model.api.request.MakeTransferByAccountRequest;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MakeTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.dto.TransferDTO;
 import ru.sovcombank.petbackendtransfers.model.entity.Transfer;
+import ru.sovcombank.petbackendtransfers.service.TransferStrategy;
 import ru.sovcombank.petbackendtransfers.service.helper.UpdateBalanceServiceHelper;
 import ru.sovcombank.petbackendtransfers.service.validator.AccountValidator;
 import ru.sovcombank.petbackendtransfers.service.validator.UserValidator;
 
+import java.util.Map;
+
 @Service
-public class TransferByAccountNumberService {
+public class TransferByAccountNumberService implements TransferStrategy {
 
     private final AccountValidator accountValidator;
 
@@ -32,16 +36,20 @@ public class TransferByAccountNumberService {
 
     private final TransferDTOBuilder transferDTOBuilder;
 
+    private final MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest;
+
     @Value("${kafka.topic.transfers-history-transaction}")
     private String kafkaTopic;
 
     public TransferByAccountNumberService(
             AccountValidator accountValidator,
             UserValidator userValidator,
-            AccountServiceClient accountServiceClient, KafkaTemplate<String, TransferDTO> kafkaTemplate,
+            AccountServiceClient accountServiceClient,
+            KafkaTemplate<String, TransferDTO> kafkaTemplate,
             ResponseBuilder responseBuilder,
             UpdateBalanceServiceHelper updateBalanceServiceHelper,
-            TransferDTOBuilder transferDTOBuilder) {
+            TransferDTOBuilder transferDTOBuilder,
+            MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest) {
         this.accountValidator = accountValidator;
         this.userValidator = userValidator;
         this.accountServiceClient = accountServiceClient;
@@ -49,15 +57,19 @@ public class TransferByAccountNumberService {
         this.responseBuilder = responseBuilder;
         this.updateBalanceServiceHelper = updateBalanceServiceHelper;
         this.transferDTOBuilder = transferDTOBuilder;
+        this.mapToMakeTransferByAccountRequest = mapToMakeTransferByAccountRequest;
     }
 
     /**
      * Совершает перевод по номеру счета.
      *
-     * @param makeTransferByAccountRequest Запрос на перевод по номеру счета.
+     * @param requestMap Запрос на перевод по номеру счета.
      * @return Ответ с сообщением о выполнении перевода.
      */
-    public MakeTransferResponse makeTransferByAccount(MakeTransferByAccountRequest makeTransferByAccountRequest) {
+    public MakeTransferResponse makeTransfer(Map<String, Object> requestMap) {
+        MakeTransferByAccountRequest makeTransferByAccountRequest =
+                mapToMakeTransferByAccountRequest.map(requestMap);
+
         validateTransfer(makeTransferByAccountRequest);
 
         Transfer transfer = updateBalanceServiceHelper.updateBalance(

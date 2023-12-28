@@ -4,9 +4,9 @@ CREATE TABLE accounts
     account_number   VARCHAR(16) UNIQUE NOT NULL,
     client_id        INT                NOT NULL,
     cur              VARCHAR(3)         NOT NULL,
-    balance          DECIMAL(15, 2)  DEFAULT 0.00,
-    create_date_time TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-    is_main          BOOLEAN         DEFAULT TRUE,
-    is_closed        BOOLEAN         DEFAULT FALSE,
-    version          BIGINT NOT NULL DEFAULT 0
+    balance          DECIMAL(15, 2) DEFAULT 0.00,
+    create_date_time TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+    is_main          BOOLEAN        DEFAULT TRUE,
+    is_closed        BOOLEAN        DEFAULT FALSE,
+    version          BIGINT
 );

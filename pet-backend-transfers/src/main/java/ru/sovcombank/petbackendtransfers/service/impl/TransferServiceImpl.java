@@ -3,11 +3,7 @@ package ru.sovcombank.petbackendtransfers.service.impl;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendtransfers.exception.BadRequestException;
-import ru.sovcombank.petbackendtransfers.mapping.impl.MapToMakeTransferByAccountRequest;
-import ru.sovcombank.petbackendtransfers.mapping.impl.MapToMakeTransferByPhoneRequest;
 import ru.sovcombank.petbackendtransfers.mapping.impl.TransferToGetTransferResponse;
-import ru.sovcombank.petbackendtransfers.model.api.request.MakeTransferByAccountRequest;
-import ru.sovcombank.petbackendtransfers.model.api.request.MakeTransferByPhoneRequest;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MakeTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.entity.Transfer;
@@ -15,7 +11,9 @@ import ru.sovcombank.petbackendtransfers.model.enums.RequestTypeEnum;
 import ru.sovcombank.petbackendtransfers.model.enums.TransferResponseMessagesEnum;
 import ru.sovcombank.petbackendtransfers.repository.TransferRepository;
 import ru.sovcombank.petbackendtransfers.service.TransferService;
+import ru.sovcombank.petbackendtransfers.service.TransferStrategy;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,26 +21,24 @@ import java.util.UUID;
 public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
-    private final MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest;
-    private final MapToMakeTransferByPhoneRequest mapToMakeTransferByPhoneRequest;
+
     private final TransferToGetTransferResponse transferToGetTransferResponse;
-    private final TransferByAccountNumberService transferByAccountNumber;
-    private final TransferByPhoneNumberService transferByPhoneNumber;
+
+    private final Map<String, TransferStrategy> transferStrategies;
+
+    private static final String REQUEST_TYPE_STR = "requestType";
 
     public TransferServiceImpl(
             TransferRepository transferRepository,
-            MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest,
-            MapToMakeTransferByPhoneRequest mapToMakeTransferByPhoneRequest,
             TransferToGetTransferResponse transferToGetTransferResponse,
             TransferByAccountNumberService transferByAccountNumber,
             TransferByPhoneNumberService transferByPhoneNumber
     ) {
         this.transferRepository = transferRepository;
-        this.mapToMakeTransferByAccountRequest = mapToMakeTransferByAccountRequest;
-        this.mapToMakeTransferByPhoneRequest = mapToMakeTransferByPhoneRequest;
         this.transferToGetTransferResponse = transferToGetTransferResponse;
-        this.transferByAccountNumber = transferByAccountNumber;
-        this.transferByPhoneNumber = transferByPhoneNumber;
+        this.transferStrategies = new HashMap<>();
+        this.transferStrategies.put(RequestTypeEnum.ACCOUNT.getRequestType(), transferByAccountNumber);
+        this.transferStrategies.put(RequestTypeEnum.PHONE.getRequestType(), transferByPhoneNumber);
     }
 
     /**
@@ -53,18 +49,11 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public MakeTransferResponse makeTransfer(Map<String, Object> requestMap) {
-        String requestType = (String) requestMap.get("requestType");
+        String requestType = (String) requestMap.get(REQUEST_TYPE_STR);
+        TransferStrategy transferStrategy = transferStrategies.get(requestType);
 
-        // Если перевод происходит по номеру счета
-        if (RequestTypeEnum.ACCOUNT.getRequestType().equals(requestType)) {
-            MakeTransferByAccountRequest makeTransferByAccountRequest =
-                    mapToMakeTransferByAccountRequest.map(requestMap);
-            return transferByAccountNumber.makeTransferByAccount(makeTransferByAccountRequest);
-            // Если перевод происходит по номеру телефона
-        } else if (RequestTypeEnum.PHONE.getRequestType().equals(requestType)) {
-            MakeTransferByPhoneRequest makeTransferByPhoneRequest =
-                    mapToMakeTransferByPhoneRequest.map(requestMap);
-            return transferByPhoneNumber.makeTransferByPhone(makeTransferByPhoneRequest);
+        if (transferStrategy != null) {
+            return transferStrategy.makeTransfer(requestMap);
         } else {
             throw new BadRequestException(TransferResponseMessagesEnum.BAD_REQUEST_FOR_REQUEST_TYPE.getMessage());
         }

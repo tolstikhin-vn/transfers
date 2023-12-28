@@ -1,6 +1,5 @@
 package ru.sovcombank.petbackendtransfers.service.impl;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -8,21 +7,24 @@ import ru.sovcombank.petbackendtransfers.builder.ResponseBuilder;
 import ru.sovcombank.petbackendtransfers.builder.TransferDTOBuilder;
 import ru.sovcombank.petbackendtransfers.client.AccountServiceClient;
 import ru.sovcombank.petbackendtransfers.client.UserServiceClient;
+import ru.sovcombank.petbackendtransfers.mapping.impl.MapToMakeTransferByPhoneRequest;
 import ru.sovcombank.petbackendtransfers.model.api.request.MakeTransferByPhoneRequest;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetAccountResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.GetUserResponse;
 import ru.sovcombank.petbackendtransfers.model.api.response.MakeTransferResponse;
 import ru.sovcombank.petbackendtransfers.model.dto.TransferDTO;
 import ru.sovcombank.petbackendtransfers.model.entity.Transfer;
+import ru.sovcombank.petbackendtransfers.service.TransferStrategy;
 import ru.sovcombank.petbackendtransfers.service.helper.GetMainAccountServiceHelper;
 import ru.sovcombank.petbackendtransfers.service.helper.UpdateBalanceServiceHelper;
 import ru.sovcombank.petbackendtransfers.service.validator.AccountValidator;
 import ru.sovcombank.petbackendtransfers.service.validator.UserValidator;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Service
-public class TransferByPhoneNumberService {
+public class TransferByPhoneNumberService implements TransferStrategy {
 
     private final AccountValidator accountValidator;
 
@@ -40,6 +42,8 @@ public class TransferByPhoneNumberService {
 
     private final TransferDTOBuilder transferDTOBuilder;
 
+    private final MapToMakeTransferByPhoneRequest mapToMakeTransferByPhoneRequest;
+
     private final KafkaTemplate<String, TransferDTO> kafkaTemplate;
 
     @Value("${kafka.topic.transfers-history-transaction}")
@@ -54,6 +58,7 @@ public class TransferByPhoneNumberService {
             GetMainAccountServiceHelper getMainAccountServiceHelper,
             UpdateBalanceServiceHelper updateBalanceServiceHelper,
             TransferDTOBuilder transferDTOBuilder,
+            MapToMakeTransferByPhoneRequest mapToMakeTransferByPhoneRequest,
             KafkaTemplate<String, TransferDTO> kafkaTemplate) {
         this.accountValidator = accountValidator;
         this.userValidator = userValidator;
@@ -63,17 +68,19 @@ public class TransferByPhoneNumberService {
         this.getMainAccountServiceHelper = getMainAccountServiceHelper;
         this.updateBalanceServiceHelper = updateBalanceServiceHelper;
         this.transferDTOBuilder = transferDTOBuilder;
+        this.mapToMakeTransferByPhoneRequest = mapToMakeTransferByPhoneRequest;
         this.kafkaTemplate = kafkaTemplate;
     }
 
     /**
      * Совершает перевод по номеру телефона.
      *
-     * @param makeTransferByPhoneRequest Запрос на перевод по номеру телефона.
+     * @param requestMap Запрос на перевод по номеру телефона.
      * @return Ответ с сообщением о выполнении перевода.
      */
-    @Transactional
-    public MakeTransferResponse makeTransferByPhone(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+    public MakeTransferResponse makeTransfer(Map<String, Object> requestMap) {
+        MakeTransferByPhoneRequest makeTransferByPhoneRequest =
+                mapToMakeTransferByPhoneRequest.map(requestMap);
 
         validateTransfer(makeTransferByPhoneRequest);
 

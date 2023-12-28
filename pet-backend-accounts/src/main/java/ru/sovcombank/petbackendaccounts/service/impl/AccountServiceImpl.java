@@ -223,6 +223,7 @@ public class AccountServiceImpl implements AccountService {
                 transferRepeatCount++;
             }
         } while (transferRepeatCount < 3);
+        System.out.println(123123);
         throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
     }
 
