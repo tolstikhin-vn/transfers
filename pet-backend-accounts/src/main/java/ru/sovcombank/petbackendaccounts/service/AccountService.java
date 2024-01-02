@@ -13,7 +13,7 @@ public interface AccountService {
 
     CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest);
 
-    GetAccountsResponse getAccounts(String clientId);
+    GetAccountsResponse getAccounts(Integer clientId);
 
     GetAccountResponse getAccountInfo(String accountNumber);
 

@@ -79,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
-        String clientId = createAccountRequest.getClientId();
+        Integer clientId = createAccountRequest.getClientId();
 
         // Проверка существования клиента с таким clientId
         userServiceClient.checkUserExists(clientId);
@@ -111,14 +111,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // Проверяет, достигнуто ли максимальное количество счетов для указанной валюты у данного клиента.
-    private boolean hasMaxAccountsForCurrency(String clientId, String cur) {
-        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(Integer.valueOf(clientId), cur);
+    private boolean hasMaxAccountsForCurrency(Integer clientId, String cur) {
+        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(clientId, cur);
         return existingAccounts.size() >= MAX_ACCOUNTS_PER_CURRENCY;
     }
 
     // Проверяет, имеет ли клиент не менее одного счета.
-    private boolean hasMoreThenOneAccount(String clientId) {
-        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(Integer.valueOf(clientId));
+    private boolean hasMoreThenOneAccount(Integer clientId) {
+        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(clientId);
         return existingAccounts.filter(accounts -> !accounts.isEmpty()).isPresent();
     }
 
@@ -130,11 +130,11 @@ public class AccountServiceImpl implements AccountService {
      * @throws UserNotFoundException если клиент не найден.
      */
     @Override
-    public GetAccountsResponse getAccounts(String clientId) {
+    public GetAccountsResponse getAccounts(Integer clientId) {
         // Проверка существования клиента с таким clientId
         userServiceClient.checkUserExists(clientId);
 
-        List<Account> accounts = accountRepository.findByClientId(Integer.parseInt(clientId))
+        List<Account> accounts = accountRepository.findByClientId(clientId)
                 .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));
 
         return listAccountToGetAccountsResponse.map(accounts);

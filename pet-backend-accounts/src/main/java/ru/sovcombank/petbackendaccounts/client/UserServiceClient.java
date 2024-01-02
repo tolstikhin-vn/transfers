@@ -26,7 +26,7 @@ public class UserServiceClient {
     }
 
     // Проверка существования клиента с таким clientId
-    public ResponseEntity<Object> checkUserExists(String clientId) {
+    public ResponseEntity<Object> checkUserExists(Integer clientId) {
         String getUserByIdUrl = userServiceUrl + "/users/" + clientId;
 
         try {

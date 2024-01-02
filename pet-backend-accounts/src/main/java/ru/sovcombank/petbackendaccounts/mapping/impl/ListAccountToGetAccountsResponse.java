@@ -12,7 +12,7 @@ import java.util.List;
 public class ListAccountToGetAccountsResponse implements Mapper<List<Account>, GetAccountsResponse> {
 
     private final Mapper<Account, AccountDTO> accountToAccountDTO;
-    private String clientId;
+    private Integer clientId;
 
     public ListAccountToGetAccountsResponse(AccountToAccountDTO accountToAccountDTO) {
         this.accountToAccountDTO = accountToAccountDTO;
