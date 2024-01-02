@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GetTransferHistoryResponse {
 
-    private String clientId;
+    private Integer clientId;
 
     private List<HistoryDTO> transfers;
 }

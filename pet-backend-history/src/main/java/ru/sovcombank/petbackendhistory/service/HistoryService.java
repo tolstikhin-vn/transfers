@@ -4,5 +4,5 @@ import ru.sovcombank.petbackendhistory.model.api.response.GetTransferHistoryResp
 
 public interface HistoryService {
 
-    GetTransferHistoryResponse getTransferHistory(String clientId);
+    GetTransferHistoryResponse getTransferHistory(Integer clientId);
 }
