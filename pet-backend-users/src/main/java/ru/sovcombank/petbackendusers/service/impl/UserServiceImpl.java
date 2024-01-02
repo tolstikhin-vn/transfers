@@ -112,7 +112,6 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException В случае, если пользователь не найден.
      */
     @Override
-    @Transactional
     public UpdateUserResponse updateUser(String id, UpdateUserRequest updateUserRequest) {
         try {
             // Проверяем существование клиента по переданному идентификатору
