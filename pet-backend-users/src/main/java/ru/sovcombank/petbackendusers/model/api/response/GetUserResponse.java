@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class GetUserResponse {
 
-    private int id;
+    private Integer id;
     private String lastName;
     private String firstName;
     private String fatherName;
