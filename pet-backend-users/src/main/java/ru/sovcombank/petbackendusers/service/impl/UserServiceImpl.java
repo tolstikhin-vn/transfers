@@ -21,7 +21,7 @@ import ru.sovcombank.petbackendusers.model.entity.User;
 import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
 import ru.sovcombank.petbackendusers.repository.UserRepository;
 import ru.sovcombank.petbackendusers.service.UserService;
-import ru.sovcombank.petbackendusers.service.helper.UserValidator;
+import ru.sovcombank.petbackendusers.service.validator.UserValidator;
 
 import java.util.Optional;
 

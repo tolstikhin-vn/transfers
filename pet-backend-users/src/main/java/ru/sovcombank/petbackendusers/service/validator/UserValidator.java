@@ -1,4 +1,4 @@
-package ru.sovcombank.petbackendusers.service.helper;
+package ru.sovcombank.petbackendusers.service.validator;
 
 import org.springframework.stereotype.Component;
 import ru.sovcombank.petbackendusers.exception.UserNotFoundException;
