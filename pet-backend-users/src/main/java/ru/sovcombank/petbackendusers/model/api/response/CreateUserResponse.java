@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateUserResponse {
 
-    private String clientId;
+    private Integer clientId;
     private String message;
 }

@@ -9,7 +9,7 @@ public class ResponseBuilder {
 
     public CreateUserResponse buildCreateUserResponse(Integer userId) {
         CreateUserResponse createUserResponse = new CreateUserResponse();
-        createUserResponse.setClientId(userId.toString());
+        createUserResponse.setClientId(userId);
         createUserResponse.setMessage(UserMessagesEnum.USER_CREATED_SUCCESSFULLY_MESSAGE.getMessage());
         return createUserResponse;
     }
