@@ -45,7 +45,7 @@ public class ResponseBuilder {
     // Получение ответа с информацией о совершенном переводе
     public MakeTransferResponse createMakeTransferResponse(BigDecimal balance) {
         return new MakeTransferResponse(
-                TransferResponseMessagesEnum.TRANSFER_MAKED_SUCCESSFULLY.getMessage() + balance
+                TransferResponseMessagesEnum.TRANSFER_MAKED_SUCCESSFULLY.getMessage() + balance.toPlainString()
         );
     }
 }

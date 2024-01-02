@@ -101,6 +101,7 @@ public class TransferByAccountNumberService implements TransferStrategy {
 
         accountValidator.validateAccountForTransfer(getAccountFromResponse);
         accountValidator.validateCur(makeTransferByAccountRequest.getCur(), getAccountFromResponse.getCur());
+        accountValidator.validateSufficientFunds(accountNumberFrom, makeTransferByAccountRequest.getAmount());
 
         String accountNumberTo = makeTransferByAccountRequest.getAccountNumberTo();
         GetAccountResponse getAccountToResponse = responseBuilder.getValidateGetAccountResponse(accountNumberTo);
