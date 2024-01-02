@@ -2,6 +2,8 @@ package ru.sovcombank.petbackendtransfers.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.builder.ResponseBuilder;
 import ru.sovcombank.petbackendtransfers.builder.TransferDTOBuilder;
@@ -79,10 +81,7 @@ public class TransferByAccountNumberService implements TransferStrategy {
                 makeTransferByAccountRequest.getAccountNumberTo(),
                 makeTransferByAccountRequest.getAmount());
 
-        kafkaTemplate.send(kafkaTopic, transferDTOBuilder.createTransferDTOObject(
-                transfer,
-                accountServiceClient.getAccountResponse(makeTransferByAccountRequest.getAccountNumberFrom()).getClientId(),
-                responseBuilder.getValidateGetAccountResponse(makeTransferByAccountRequest.getAccountNumberTo()).getClientId()));
+        sendKafkaMessage(transfer, makeTransferByAccountRequest);
 
         return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(
                 makeTransferByAccountRequest.getAccountNumberFrom()).getBalance());
@@ -107,5 +106,13 @@ public class TransferByAccountNumberService implements TransferStrategy {
         GetAccountResponse getAccountToResponse = responseBuilder.getValidateGetAccountResponse(accountNumberTo);
 
         userValidator.validateUserForTransferByAccount(getAccountToResponse.getClientId());
+    }
+
+    @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    private void sendKafkaMessage(Transfer transfer, MakeTransferByAccountRequest makeTransferByAccountRequest) {
+        kafkaTemplate.send(kafkaTopic, transferDTOBuilder.createTransferDTOObject(
+                transfer,
+                accountServiceClient.getAccountResponse(makeTransferByAccountRequest.getAccountNumberFrom()).getClientId(),
+                responseBuilder.getValidateGetAccountResponse(makeTransferByAccountRequest.getAccountNumberTo()).getClientId()));
     }
 }

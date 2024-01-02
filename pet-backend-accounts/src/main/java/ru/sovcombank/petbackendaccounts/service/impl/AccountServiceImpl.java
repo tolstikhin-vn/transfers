@@ -1,6 +1,9 @@
 package ru.sovcombank.petbackendaccounts.service.impl;
 
 import jakarta.persistence.OptimisticLockException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sovcombank.petbackendaccounts.builder.ResponseBuilder;
@@ -208,26 +211,18 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     @Transactional
+    @Retryable(retryFor = OptimisticLockException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public UpdateBalanceResponse updateBalance(String accountNumber, UpdateBalanceRequest updateBalanceRequest) {
-        int transferRepeatCount = 0;
-        do {
-            try {
-                // Проверяем существование клиента по переданному идентификатору
-                Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
-                if (accountOptional.isPresent()) {
-                    Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
-                    accountRepository.save(changedAccount);
+        // Проверяем существование клиента по переданному идентификатору
+        Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
+        if (accountOptional.isPresent()) {
+            Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
+            accountRepository.save(changedAccount);
 
-                    return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
-                } else {
-                    throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
-                }
-            } catch (OptimisticLockException ex) {
-                transferRepeatCount++;
-            }
-        } while (transferRepeatCount < TRANSFER_REPEAT_COUNT);
-
-        throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
+            return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+        } else {
+            throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+        }
     }
 
     // Совершает операцию пополнения/снятия исходя из запроса.
@@ -248,5 +243,10 @@ public class AccountServiceImpl implements AccountService {
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_TYPE_PAY.getMessage());
         }
         return account;
+    }
+
+    @Recover
+    public void handleOptimisticLockException(OptimisticLockException ex) {
+        throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
     }
 }
