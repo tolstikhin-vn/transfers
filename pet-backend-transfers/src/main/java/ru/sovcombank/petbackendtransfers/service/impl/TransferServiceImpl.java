@@ -1,5 +1,6 @@
 package ru.sovcombank.petbackendtransfers.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.exception.AccountNotFoundException;
 import ru.sovcombank.petbackendtransfers.exception.BadRequestException;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class TransferServiceImpl implements TransferService {
 
@@ -55,6 +57,7 @@ public class TransferServiceImpl implements TransferService {
         if (transferStrategy != null) {
             return transferStrategy.makeTransfer(requestMap);
         } else {
+            log.error("BadRequestException occurred: {}", TransferResponseMessagesEnum.BAD_REQUEST_FOR_REQUEST_TYPE.getMessage());
             throw new BadRequestException(TransferResponseMessagesEnum.BAD_REQUEST_FOR_REQUEST_TYPE.getMessage());
         }
     }
@@ -69,8 +72,7 @@ public class TransferServiceImpl implements TransferService {
     public GetTransferResponse getTransfers(String uuid) {
         Transfer transfer = transferRepository.findByUuid(UUID.fromString(uuid))
                 .orElseThrow(() -> new AccountNotFoundException(
-                        TransferResponseMessagesEnum.TRANSFER_NOT_FOUND.getMessage())
-                );
+                        TransferResponseMessagesEnum.TRANSFER_NOT_FOUND.getMessage()));
         return transferToGetTransferResponse.map(transfer);
     }
 }

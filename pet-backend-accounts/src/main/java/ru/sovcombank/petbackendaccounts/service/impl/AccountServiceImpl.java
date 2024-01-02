@@ -1,6 +1,7 @@
 package ru.sovcombank.petbackendaccounts.service.impl;
 
 import jakarta.persistence.OptimisticLockException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -36,6 +37,7 @@ import java.util.Random;
 /**
  * Сервис для операций со счетами.
  */
+@Slf4j
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -54,8 +56,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountValidator accountValidator;
 
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
-
-    private static final int TRANSFER_REPEAT_COUNT = 3;
 
     public AccountServiceImpl(AccountRepository accountRepository,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
@@ -103,9 +103,11 @@ public class AccountServiceImpl implements AccountService {
             }
 
             Account createdAccount = accountRepository.save(accountEntity);
+            log.info("Account created successfully for client with id: {}", createAccountRequest.getClientId());
 
             return responseBuilder.buildCreateAccountResponse(createdAccount);
         } else {
+            log.error("BadRequestException occurred: {}", AccountResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage());
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_CUR.getMessage());
         }
     }
@@ -141,7 +143,7 @@ public class AccountServiceImpl implements AccountService {
 
         List<Account> accounts = accountRepository.findByClientId(clientId)
                 .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));
-
+        log.info("Retrieved accounts successfully for client with id: {}", clientId);
         return listAccountToGetAccountsResponse.map(accounts);
     }
 
@@ -150,7 +152,7 @@ public class AccountServiceImpl implements AccountService {
     public GetAccountResponse getAccountInfo(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage()));
-
+        log.info("Retrieved account information successfully for account with number: {}", accountNumber);
         return accountToGetAccountResponse.map(account);
     }
 
@@ -174,8 +176,11 @@ public class AccountServiceImpl implements AccountService {
             account.setClosed(true);
             accountRepository.save(account);
 
+            log.info("Account deleted successfully for account with number: {}", accountNumber);
+
             return new DeleteAccountResponse(AccountResponseMessagesEnum.ACCOUNT_DELETED_SUCCESSFULLY.getMessage());
         } else {
+            log.error("AccountNotFoundException occurred: {}", AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
     }
@@ -195,8 +200,11 @@ public class AccountServiceImpl implements AccountService {
             GetBalanceResponse getBalanceResponse = new GetBalanceResponse();
             getBalanceResponse.setBalance(accountOptional.get().getBalance());
 
+            log.info("Retrieved balance successfully for account with number: {}", accountNumber);
+
             return getBalanceResponse;
         } else {
+            log.error("AccountNotFoundException occurred: {}", AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
     }
@@ -219,8 +227,11 @@ public class AccountServiceImpl implements AccountService {
             Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
             accountRepository.save(changedAccount);
 
+            log.info("Balance updated successfully for account with number: {}", accountNumber);
+
             return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
         } else {
+            log.error("AccountNotFoundException occurred: {}", AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
         }
     }

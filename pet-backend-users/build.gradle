@@ -15,9 +15,6 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    configureEach {
-        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-    }
 }
 
 repositories {

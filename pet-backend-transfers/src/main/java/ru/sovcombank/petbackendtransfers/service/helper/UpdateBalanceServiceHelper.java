@@ -1,5 +1,6 @@
 package ru.sovcombank.petbackendtransfers.service.helper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sovcombank.petbackendtransfers.builder.RequestBuilder;
@@ -11,6 +12,7 @@ import ru.sovcombank.petbackendtransfers.model.enums.TypePaymentsEnum;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Component
 public class UpdateBalanceServiceHelper {
 
@@ -43,6 +45,9 @@ public class UpdateBalanceServiceHelper {
         UpdateBalanceRequest updateBalanceRequestForAccountTo = requestBuilder.createUpdateBalanceRequest(
                 TypePaymentsEnum.REPLENISHMENT.getTypePayment(),
                 amountByCur);
+
+        log.info("Making a transfer from account {} to account {} with the amount for the recipient of {}",
+                accountNumberFrom, accountNumberTo, amountByCur);
 
         databaseChanger.updateAccountBalance(accountNumberFrom, updateBalanceRequestForAccountFrom);
         databaseChanger.updateAccountBalance(accountNumberTo, updateBalanceRequestForAccountTo);

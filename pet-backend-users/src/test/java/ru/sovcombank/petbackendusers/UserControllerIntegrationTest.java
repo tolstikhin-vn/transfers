@@ -119,7 +119,7 @@ public class UserControllerIntegrationTest {
 
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
-        assertEquals(createUserRequest.getPhoneNumber() + " с таким phoneNumber уже зарегистрирован",
+        assertEquals(createUserRequest.getPhoneNumber() + " с таким номером телефона уже зарегистрирован",
                 Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
 
