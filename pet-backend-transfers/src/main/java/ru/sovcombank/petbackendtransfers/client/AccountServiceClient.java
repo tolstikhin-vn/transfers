@@ -97,7 +97,7 @@ public class AccountServiceClient {
      * @return Объект GetAccountsResponse с информацией о счетах клиента.
      * @throws UserNotFoundException Если клиент не найден, выбрасывается исключение.
      */
-    public GetAccountsResponse getAccountsResponse(String clientId) {
+    public GetAccountsResponse getAccountsResponse(Integer clientId) {
         String getAccountsUrl = accountServiceUrl + "/accounts/" + clientId;
 
         try {

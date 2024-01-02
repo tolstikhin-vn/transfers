@@ -132,11 +132,11 @@ public class TransferByPhoneNumberService implements TransferStrategy {
 
     private String getMainAccountTo(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
         return getMainAccountServiceHelper.getMainAccount(responseBuilder.getAccountsResponse(
-                        Integer.toString(userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId()))
+                        userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId())
                 .getAccountList());
     }
 
-    private String getClientId(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
-        return String.valueOf(userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId());
+    private Integer getClientId(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        return userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId();
     }
 }

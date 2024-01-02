@@ -38,7 +38,7 @@ public class ResponseBuilder {
     }
 
     // Получение ответа с информацией о счетах
-    public GetAccountsResponse getAccountsResponse(String clientId) {
+    public GetAccountsResponse getAccountsResponse(Integer clientId) {
         return accountServiceClient.getAccountsResponse(clientId);
     }
 

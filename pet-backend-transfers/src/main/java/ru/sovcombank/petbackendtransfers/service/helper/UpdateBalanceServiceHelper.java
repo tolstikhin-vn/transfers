@@ -40,9 +40,6 @@ public class UpdateBalanceServiceHelper {
 
         BigDecimal amountByCur = getAmountByCurServiceHelper.getAmountByCur(cur, transferAmount, getAccountResponse);
 
-
-        System.out.println("amountByCur" + amountByCur);
-
         UpdateBalanceRequest updateBalanceRequestForAccountTo = requestBuilder.createUpdateBalanceRequest(
                 TypePaymentsEnum.REPLENISHMENT.getTypePayment(),
                 amountByCur);

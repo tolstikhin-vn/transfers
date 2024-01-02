@@ -52,6 +52,8 @@ public class AccountServiceImpl implements AccountService {
 
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
+    private static final int TRANSFER_REPEAT_COUNT = 3;
+
     public AccountServiceImpl(AccountRepository accountRepository,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
                               CreateAccountRequestToAccount createAccountRequestToAccount,
@@ -213,8 +215,6 @@ public class AccountServiceImpl implements AccountService {
                 // Проверяем существование клиента по переданному идентификатору
                 Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
                 if (accountOptional.isPresent()) {
-                    accountValidator.validateAccountIsClosed(accountOptional.get());
-
                     Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
                     accountRepository.save(changedAccount);
 
@@ -225,8 +225,8 @@ public class AccountServiceImpl implements AccountService {
             } catch (OptimisticLockException ex) {
                 transferRepeatCount++;
             }
-        } while (transferRepeatCount < 3);
-        System.out.println(123123);
+        } while (transferRepeatCount < TRANSFER_REPEAT_COUNT);
+
         throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
     }
 
@@ -238,6 +238,7 @@ public class AccountServiceImpl implements AccountService {
         if (typePayment.equals(TypePaymentsEnum.REPLENISHMENT.getTypePayment())) {
             account.setBalance(account.getBalance().add(updateBalanceRequest.getAmount()));
         } else if (typePayment.equals(TypePaymentsEnum.DEBITING.getTypePayment())) {
+            accountValidator.validateAccountIsClosed(account);
             // Проверка на наличие достаточного количества средств для списания
             if (account.getBalance().compareTo(updateBalanceRequest.getAmount()) < 0) {
                 throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());

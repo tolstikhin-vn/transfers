@@ -13,10 +13,15 @@ import java.math.BigDecimal;
 public class GetAccountResponse {
 
     private String accountNumber;
-    private String clientId;
+
+    private Integer clientId;
+
     private String cur;
+
     private BigDecimal balance;
+
     private boolean isMain;
+
     @JsonProperty(value = "isClosed")
     private boolean isClosed;
 }
