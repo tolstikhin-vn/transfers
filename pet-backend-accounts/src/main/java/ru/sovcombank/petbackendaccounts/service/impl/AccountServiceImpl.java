@@ -163,6 +163,9 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
+
+            accountValidator.validateAccountIsClosed(accountOptional.get());
+
             account.setClosed(true);
             accountRepository.save(account);
 
