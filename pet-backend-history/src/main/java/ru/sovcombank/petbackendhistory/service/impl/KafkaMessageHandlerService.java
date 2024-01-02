@@ -2,12 +2,14 @@ package ru.sovcombank.petbackendhistory.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendhistory.exception.InternalServerErrorException;
 import ru.sovcombank.petbackendhistory.model.entity.History;
 import ru.sovcombank.petbackendhistory.repository.HistoryRepository;
 
+@Slf4j
 @Service
 public class KafkaMessageHandlerService {
 
@@ -23,6 +25,10 @@ public class KafkaMessageHandlerService {
     public void handleMessage(String jsonMessage) {
         try {
             History history = mapper.readValue(jsonMessage, History.class);
+
+            log.info("The transfer from account {} to account{} in the amount of {} is saved in the history",
+                    history.getAccountNumberFrom(), history.getAccountNumberTo(), history.getAmount());
+
             historyRepository.save(history);
         } catch (JsonProcessingException ex) {
             throw new InternalServerErrorException(ex);

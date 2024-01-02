@@ -1,5 +1,6 @@
 package ru.sovcombank.petbackendtransfers.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.retry.annotation.Backoff;
@@ -21,6 +22,7 @@ import ru.sovcombank.petbackendtransfers.service.validator.UserValidator;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 public class TransferByAccountNumberService implements TransferStrategy {
 
@@ -82,6 +84,9 @@ public class TransferByAccountNumberService implements TransferStrategy {
                 makeTransferByAccountRequest.getAmount());
 
         sendKafkaMessage(transfer, makeTransferByAccountRequest);
+
+        log.info("The transfer from account {} to account{} in the amount of {} was completed successfully",
+                transfer.getAccountNumberFrom(), transfer.getAccountNumberTo(), transfer.getAmount());
 
         return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(
                 makeTransferByAccountRequest.getAccountNumberFrom()).getBalance());

@@ -1,5 +1,6 @@
 package ru.sovcombank.petbackendusers.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.Optional;
 /**
  * Реализация сервиса пользователей.
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -36,7 +38,6 @@ public class UserServiceImpl implements UserService {
     private final UpdateUserRequestToUser updateUserRequestToUser;
     private final UserToGetUserResponse userToGetUserResponse;
     private final ResponseBuilder responseBuilder;
-
     private final UserValidator userValidator;
 
     public UserServiceImpl(UserRepository userRepository,
@@ -65,14 +66,18 @@ public class UserServiceImpl implements UserService {
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         try {
             User createdUser = userRepository.save(createUserRequestToUser.map(createUserRequest));
+            log.info("User created with id: {}", createdUser.getId());
             return responseBuilder.buildCreateUserResponse(createdUser.getId());
         } catch (DataIntegrityViolationException ex) {
             if (ex.getCause() instanceof ConstraintViolationException) {
+                log.error("ConflictException occurred: {}", ex.getMessage());
                 throw new ConflictException(ex);
             }
+            log.error("InternalServerErrorException occurred: {}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
     }
+
 
     /**
      * Получает информацию о пользователе по идентификатору.
@@ -124,15 +129,17 @@ public class UserServiceImpl implements UserService {
             if (userOptional.isPresent()) {
                 updateUserRequest.setId(id);
                 userRepository.save(updateUserRequestToUser.map(updateUserRequest));
-
+                log.info("User data updated successfully for user with id: {}", id);
                 return new UpdateUserResponse(UserMessagesEnum.USER_UPDATED_SUCCESSFULLY_MESSAGE.getMessage());
             } else {
                 throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
             }
         } catch (DataIntegrityViolationException ex) {
             if (ex.getCause() instanceof ConstraintViolationException) {
+                log.error("ConflictException occurred: {}", ex.getMessage());
                 throw new ConflictException(ex);
             }
+            log.error("InternalServerErrorException occurred: {}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
     }
@@ -151,12 +158,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
             userValidator.validateUserIsDeleted(user);
-
             user.setIsDeleted(true);
             userRepository.save(user);
-
+            log.info("User deleted successfully with id: {}", id);
             return new DeleteUserResponse(UserMessagesEnum.USER_DELETED_SUCCESSFULLY_MESSAGE.getMessage());
         } else {
             throw new UserNotFoundException(UserMessagesEnum.USER_NOT_FOUND_MESSAGE.getMessage());
