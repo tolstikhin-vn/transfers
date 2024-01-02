@@ -68,7 +68,7 @@ docker-compose up
 **Исходящие параметры:**
 ```json
 { 
- "clientId": "1",
+ "clientId": 1,
  "message": "Пользователь успешно создан"
 }
 ```
