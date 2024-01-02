@@ -50,7 +50,7 @@ public class UserServiceClient {
      * @param clientId Идентификатор клиента.
      * @return true, если пользователь существует и активен, в противном случае - false.
      */
-    public boolean checkUserExistsForTransferByAccount(String clientId) {
+    public boolean checkUserExistsForTransferByAccount(Integer clientId) {
         String getUserByIdUrl = userServiceUrl + "/users/" + clientId;
 
         try {
@@ -73,7 +73,7 @@ public class UserServiceClient {
      * @return true, если пользователь существует, активен и номер телефона совпадает,
      * в противном случае - false.
      */
-    public boolean checkUserExistsForTransferByPhone(String clientId, String phoneNumber) {
+    public boolean checkUserExistsForTransferByPhone(Integer clientId, String phoneNumber) {
         String getUserByIdUrl = userServiceUrl + "/users/" + clientId;
 
         try {

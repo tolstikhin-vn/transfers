@@ -1,6 +1,9 @@
 package ru.sovcombank.petbackendaccounts.service.impl;
 
 import jakarta.persistence.OptimisticLockException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sovcombank.petbackendaccounts.builder.ResponseBuilder;
@@ -52,6 +55,8 @@ public class AccountServiceImpl implements AccountService {
 
     private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
 
+    private static final int TRANSFER_REPEAT_COUNT = 3;
+
     public AccountServiceImpl(AccountRepository accountRepository,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
                               CreateAccountRequestToAccount createAccountRequestToAccount,
@@ -79,7 +84,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
-        String clientId = createAccountRequest.getClientId();
+        Integer clientId = createAccountRequest.getClientId();
 
         // Проверка существования клиента с таким clientId
         userServiceClient.checkUserExists(clientId);
@@ -111,14 +116,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // Проверяет, достигнуто ли максимальное количество счетов для указанной валюты у данного клиента.
-    private boolean hasMaxAccountsForCurrency(String clientId, String cur) {
-        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(Integer.valueOf(clientId), cur);
+    private boolean hasMaxAccountsForCurrency(Integer clientId, String cur) {
+        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(clientId, cur);
         return existingAccounts.size() >= MAX_ACCOUNTS_PER_CURRENCY;
     }
 
     // Проверяет, имеет ли клиент не менее одного счета.
-    private boolean hasMoreThenOneAccount(String clientId) {
-        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(Integer.valueOf(clientId));
+    private boolean hasMoreThenOneAccount(Integer clientId) {
+        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(clientId);
         return existingAccounts.filter(accounts -> !accounts.isEmpty()).isPresent();
     }
 
@@ -130,11 +135,11 @@ public class AccountServiceImpl implements AccountService {
      * @throws UserNotFoundException если клиент не найден.
      */
     @Override
-    public GetAccountsResponse getAccounts(String clientId) {
+    public GetAccountsResponse getAccounts(Integer clientId) {
         // Проверка существования клиента с таким clientId
         userServiceClient.checkUserExists(clientId);
 
-        List<Account> accounts = accountRepository.findByClientId(Integer.parseInt(clientId))
+        List<Account> accounts = accountRepository.findByClientId(clientId)
                 .orElseThrow(() -> new UserNotFoundException(AccountResponseMessagesEnum.USER_NOT_FOUND.getMessage()));
 
         return listAccountToGetAccountsResponse.map(accounts);
@@ -163,6 +168,9 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
+
+            accountValidator.validateAccountIsClosed(accountOptional.get());
+
             account.setClosed(true);
             accountRepository.save(account);
 
@@ -203,28 +211,18 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     @Transactional
+    @Retryable(retryFor = OptimisticLockException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public UpdateBalanceResponse updateBalance(String accountNumber, UpdateBalanceRequest updateBalanceRequest) {
-        int transferRepeatCount = 0;
-        do {
-            try {
-                // Проверяем существование клиента по переданному идентификатору
-                Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
-                if (accountOptional.isPresent()) {
-                    accountValidator.validateAccountIsClosed(accountOptional.get());
+        // Проверяем существование клиента по переданному идентификатору
+        Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
+        if (accountOptional.isPresent()) {
+            Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
+            accountRepository.save(changedAccount);
 
-                    Account changedAccount = makePayment(updateBalanceRequest, accountOptional.get());
-                    accountRepository.save(changedAccount);
-
-                    return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
-                } else {
-                    throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
-                }
-            } catch (OptimisticLockException ex) {
-                transferRepeatCount++;
-            }
-        } while (transferRepeatCount < 3);
-        System.out.println(123123);
-        throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
+            return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+        } else {
+            throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
+        }
     }
 
     // Совершает операцию пополнения/снятия исходя из запроса.
@@ -235,6 +233,7 @@ public class AccountServiceImpl implements AccountService {
         if (typePayment.equals(TypePaymentsEnum.REPLENISHMENT.getTypePayment())) {
             account.setBalance(account.getBalance().add(updateBalanceRequest.getAmount()));
         } else if (typePayment.equals(TypePaymentsEnum.DEBITING.getTypePayment())) {
+            accountValidator.validateAccountIsClosed(account);
             // Проверка на наличие достаточного количества средств для списания
             if (account.getBalance().compareTo(updateBalanceRequest.getAmount()) < 0) {
                 throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
@@ -244,5 +243,10 @@ public class AccountServiceImpl implements AccountService {
             throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_TYPE_PAY.getMessage());
         }
         return account;
+    }
+
+    @Recover
+    public void handleOptimisticLockException(OptimisticLockException ex) {
+        throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
     }
 }

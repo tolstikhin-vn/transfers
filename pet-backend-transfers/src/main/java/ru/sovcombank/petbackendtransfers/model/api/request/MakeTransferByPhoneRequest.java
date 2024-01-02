@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class MakeTransferByPhoneRequest {
 
     @NotNull
-    private String clientId;
+    private Integer clientId;
 
     @NotNull
     @Pattern(regexp = "^(ACCOUNT|PHONE)$")

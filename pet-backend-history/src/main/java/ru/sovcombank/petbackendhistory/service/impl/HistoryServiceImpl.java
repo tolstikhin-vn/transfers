@@ -27,7 +27,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public GetTransferHistoryResponse getTransferHistory(String clientId) {
+    public GetTransferHistoryResponse getTransferHistory(Integer clientId) {
         List<History> transferHistory = historyRepository.findByClientId(clientId);
 
         listTransferToGetHistoryTransferResponse.setClientId(clientId);

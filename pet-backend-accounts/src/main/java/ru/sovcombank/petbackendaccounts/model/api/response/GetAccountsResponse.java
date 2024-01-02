@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GetAccountsResponse {
 
-    private String clientId;
+    private Integer clientId;
 
     private List<AccountDTO> accountNumbers;
 }

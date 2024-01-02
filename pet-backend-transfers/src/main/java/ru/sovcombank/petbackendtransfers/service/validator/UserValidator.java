@@ -17,7 +17,7 @@ public class UserValidator {
     }
 
     // Валидация пользователя (проверка полей isActive и isDeleted)
-    public void validateUserForTransferByAccount(String clientId) {
+    public void validateUserForTransferByAccount(Integer clientId) {
         if (!userServiceClient.checkUserExistsForTransferByAccount(clientId)) {
             throw new UserNotFoundException(TransferResponseMessagesEnum.USER_NOT_FOUND.getMessage());
         }

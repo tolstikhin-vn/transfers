@@ -15,7 +15,7 @@ public class ListTransferToGetHistoryTransferResponse implements Mapper<List<His
 
     private final Mapper<History, HistoryDTO> historyToHistoryDTO;
 
-    private String clientId;
+    private Integer clientId;
 
     public ListTransferToGetHistoryTransferResponse(Mapper<History, HistoryDTO> historyToHistoryDTO) {
         this.historyToHistoryDTO = historyToHistoryDTO;

@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -116,7 +117,7 @@ public class TransferControllerIntegrationTest {
         ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<TransferDTO> transferCaptor = ArgumentCaptor.forClass(TransferDTO.class);
 
-        when(userServiceClient.checkUserExistsForTransferByAccount(anyString()))
+        when(userServiceClient.checkUserExistsForTransferByAccount(anyInt()))
                 .thenReturn(true);
 
         when(accountServiceClient.getAccountResponse(anyString()))
@@ -163,7 +164,7 @@ public class TransferControllerIntegrationTest {
                 "response/make-transfer-response.json",
                 MakeTransferResponse.class);
 
-        when(userServiceClient.checkUserExistsForTransferByPhone(anyString(), anyString()))
+        when(userServiceClient.checkUserExistsForTransferByPhone(anyInt(), anyString()))
                 .thenReturn(true);
 
         when(accountServiceClient.getAccountResponse(anyString()))
@@ -176,7 +177,7 @@ public class TransferControllerIntegrationTest {
                         "response/get-user-response.json",
                         GetUserResponse.class));
 
-        when(accountServiceClient.getAccountsResponse(anyString()))
+        when(accountServiceClient.getAccountsResponse(anyInt()))
                 .thenReturn(readFromJson(
                         "response/get-accounts-response.json",
                         GetAccountsResponse.class));
@@ -186,7 +187,7 @@ public class TransferControllerIntegrationTest {
                         "response/get-balance-response.json",
                         GetBalanceResponse.class));
 
-        when(userServiceClient.checkUserExistsForTransferByAccount(anyString()))
+        when(userServiceClient.checkUserExistsForTransferByAccount(anyInt()))
                 .thenReturn(true);
 
         ResponseEntity<MakeTransferResponse> responseEntity = restTemplate.postForEntity(
@@ -226,10 +227,10 @@ public class TransferControllerIntegrationTest {
                 "request/make-transfer-by-phone-request.json",
                 Map.class);
 
-        when(userServiceClient.checkUserExistsForTransferByPhone(anyString(), anyString()))
+        when(userServiceClient.checkUserExistsForTransferByPhone(anyInt(), anyString()))
                 .thenReturn(true);
 
-        when(accountServiceClient.getAccountsResponse(anyString()))
+        when(accountServiceClient.getAccountsResponse(anyInt()))
                 .thenReturn(readFromJson(
                         "response/get-accounts-response.json",
                         GetAccountsResponse.class));
@@ -257,10 +258,10 @@ public class TransferControllerIntegrationTest {
                 "request/make-transfer-by-phone-request.json",
                 Map.class);
 
-        when(userServiceClient.checkUserExistsForTransferByPhone(anyString(), anyString()))
+        when(userServiceClient.checkUserExistsForTransferByPhone(anyInt(), anyString()))
                 .thenReturn(true);
 
-        when(accountServiceClient.getAccountsResponse(anyString()))
+        when(accountServiceClient.getAccountsResponse(anyInt()))
                 .thenReturn(readFromJson(
                         "response/get-accounts-response.json",
                         GetAccountsResponse.class));
@@ -288,10 +289,10 @@ public class TransferControllerIntegrationTest {
                 "request/make-transfer-by-phone-request.json",
                 Map.class);
 
-        when(userServiceClient.checkUserExistsForTransferByPhone(anyString(), anyString()))
+        when(userServiceClient.checkUserExistsForTransferByPhone(anyInt(), anyString()))
                 .thenReturn(true);
 
-        when(accountServiceClient.getAccountsResponse(anyString()))
+        when(accountServiceClient.getAccountsResponse(anyInt()))
                 .thenReturn(readFromJson(
                         "response/get-accounts-response.json",
                         GetAccountsResponse.class));

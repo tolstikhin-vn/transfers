@@ -26,10 +26,10 @@ public class History {
     private String accountNumberFrom;
 
     @Column(nullable = false)
-    private String clientIdFrom;
+    private Integer clientIdFrom;
 
     @Column(nullable = false)
-    private String clientIdTo;
+    private Integer clientIdTo;
 
     @Column(nullable = false)
     private String accountNumberTo;

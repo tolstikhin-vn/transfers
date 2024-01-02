@@ -2,6 +2,8 @@ package ru.sovcombank.petbackendtransfers.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.builder.ResponseBuilder;
 import ru.sovcombank.petbackendtransfers.builder.TransferDTOBuilder;
@@ -93,9 +95,7 @@ public class TransferByPhoneNumberService implements TransferStrategy {
                 getMainAccountTo(makeTransferByPhoneRequest),
                 makeTransferByPhoneRequest.getAmount());
 
-        kafkaTemplate.send(kafkaTopic, transferDTOBuilder.createTransferDTOObject(transfer,
-                accountServiceClient.getAccountResponse(getMainAccountFrom(makeTransferByPhoneRequest)).getClientId(),
-                responseBuilder.getValidateGetAccountResponse(getMainAccountTo(makeTransferByPhoneRequest)).getClientId()));
+        sendKafkaMessage(transfer, makeTransferByPhoneRequest);
 
         return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(
                 getMainAccountFrom(makeTransferByPhoneRequest)).getBalance());
@@ -132,11 +132,18 @@ public class TransferByPhoneNumberService implements TransferStrategy {
 
     private String getMainAccountTo(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
         return getMainAccountServiceHelper.getMainAccount(responseBuilder.getAccountsResponse(
-                        Integer.toString(userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId()))
+                        userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId())
                 .getAccountList());
     }
 
-    private String getClientId(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
-        return String.valueOf(userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId());
+    private Integer getClientId(MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        return userServiceClient.getUserInfo(makeTransferByPhoneRequest.getPhoneNumberTo()).getId();
+    }
+
+    @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    private void sendKafkaMessage(Transfer transfer, MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        kafkaTemplate.send(kafkaTopic, transferDTOBuilder.createTransferDTOObject(transfer,
+                accountServiceClient.getAccountResponse(getMainAccountFrom(makeTransferByPhoneRequest)).getClientId(),
+                responseBuilder.getValidateGetAccountResponse(getMainAccountTo(makeTransferByPhoneRequest)).getClientId()));
     }
 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class CreateAccountRequest {
 
     @NotNull
-    private String clientId;
+    private Integer clientId;
 
     @NotNull
     @Pattern(regexp = "^(810|840|933)$")

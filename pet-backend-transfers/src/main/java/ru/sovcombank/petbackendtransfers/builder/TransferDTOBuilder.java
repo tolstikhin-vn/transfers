@@ -15,10 +15,10 @@ public class TransferDTOBuilder {
     }
 
     // Создание объекта TransferDTO по значениям полей
-    public TransferDTO createTransferDTOObject(Transfer transfer, String clientIdFrom, String clientIdTo) {
+    public TransferDTO createTransferDTOObject(Transfer transfer, Integer clientIdFrom, Integer clientIdTo) {
         TransferDTO transferDTO = transferToTransferDTO.map(transfer);
-        transferDTO.setClientIdFrom(Integer.valueOf(clientIdFrom));
-        transferDTO.setClientIdTo(Integer.valueOf(clientIdTo));
+        transferDTO.setClientIdFrom(clientIdFrom);
+        transferDTO.setClientIdTo(clientIdTo);
         return transferDTO;
     }
 }

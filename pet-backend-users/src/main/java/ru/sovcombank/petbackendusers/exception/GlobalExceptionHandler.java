@@ -76,8 +76,8 @@ public class GlobalExceptionHandler {
 
     private String getErrorField(String field) {
         return switch (field) {
-            case "phone_number" -> "phoneNumber";
-            case "passport_number" -> "passportNumber";
+            case "phone_number" -> "номером телефона";
+            case "passport_number" -> "номером паспорта";
             default -> "";
         };
     }

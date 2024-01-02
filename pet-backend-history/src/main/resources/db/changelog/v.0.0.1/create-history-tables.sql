@@ -1,8 +1,8 @@
 CREATE TABLE history
 (
     uuid                  UUID           NOT NULL,
-    client_id_from VARCHAR NOT NULL,
-    client_id_to   VARCHAR NOT NULL,
+    client_id_from INT NOT NULL,
+    client_id_to   INT NOT NULL,
     account_number_from   VARCHAR(16)    NOT NULL,
     account_number_to     VARCHAR(16)    NOT NULL,
     amount                DECIMAL(15, 2) NOT NULL,

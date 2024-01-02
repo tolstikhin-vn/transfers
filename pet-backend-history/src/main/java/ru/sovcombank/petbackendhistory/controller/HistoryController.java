@@ -29,7 +29,7 @@ public class HistoryController {
      * @return Ответ с информацией о переводе.
      */
     @GetMapping("/{clientId}")
-    public ResponseEntity<Object> getTransferHistory(@PathVariable String clientId) {
+    public ResponseEntity<Object> getTransferHistory(@PathVariable Integer clientId) {
         GetTransferHistoryResponse response = historyService.getTransferHistory(clientId);
         return ResponseEntity.ok(response);
     }
