@@ -21,6 +21,7 @@ import ru.sovcombank.petbackendusers.model.entity.User;
 import ru.sovcombank.petbackendusers.model.enums.UserMessagesEnum;
 import ru.sovcombank.petbackendusers.repository.UserRepository;
 import ru.sovcombank.petbackendusers.service.UserService;
+import ru.sovcombank.petbackendusers.service.helper.UserValidator;
 
 import java.util.Optional;
 
@@ -36,16 +37,20 @@ public class UserServiceImpl implements UserService {
     private final UserToGetUserResponse userToGetUserResponse;
     private final ResponseBuilder responseBuilder;
 
+    private final UserValidator userValidator;
+
     public UserServiceImpl(UserRepository userRepository,
                            CreateUserRequestToUser createUserRequestToUser,
                            UpdateUserRequestToUser updateUserRequestToUser,
                            UserToGetUserResponse userToGetUserResponse,
-                           ResponseBuilder responseBuilder) {
+                           ResponseBuilder responseBuilder,
+                           UserValidator userValidator) {
         this.userRepository = userRepository;
         this.createUserRequestToUser = createUserRequestToUser;
         this.updateUserRequestToUser = updateUserRequestToUser;
         this.userToGetUserResponse = userToGetUserResponse;
         this.responseBuilder = responseBuilder;
+        this.userValidator = userValidator;
     }
 
     /**
@@ -146,6 +151,9 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findById(Long.valueOf(id));
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+
+            userValidator.validateUserIsDeleted(user);
+
             user.setIsDeleted(true);
             userRepository.save(user);
 
