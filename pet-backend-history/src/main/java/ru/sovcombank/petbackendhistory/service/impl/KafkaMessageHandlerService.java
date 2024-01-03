@@ -25,11 +25,9 @@ public class KafkaMessageHandlerService {
     public void handleMessage(String jsonMessage) {
         try {
             History history = mapper.readValue(jsonMessage, History.class);
-
+            historyRepository.save(history);
             log.info("The transfer from account {} to account{} in the amount of {} is saved in the history",
                     history.getAccountNumberFrom(), history.getAccountNumberTo(), history.getAmount());
-
-            historyRepository.save(history);
         } catch (JsonProcessingException ex) {
             throw new InternalServerErrorException(ex);
         }
