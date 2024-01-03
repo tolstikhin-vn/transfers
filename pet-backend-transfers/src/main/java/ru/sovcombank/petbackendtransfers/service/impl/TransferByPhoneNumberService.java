@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.builder.ResponseBuilder;
 import ru.sovcombank.petbackendtransfers.builder.TransferDTOBuilder;
@@ -24,6 +26,7 @@ import ru.sovcombank.petbackendtransfers.service.validator.AccountValidator;
 import ru.sovcombank.petbackendtransfers.service.validator.UserValidator;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Map;
 
 @Slf4j
@@ -50,6 +53,8 @@ public class TransferByPhoneNumberService implements TransferStrategy {
 
     private final KafkaTemplate<String, TransferDTO> kafkaTemplate;
 
+    private final TaskScheduler taskScheduler;
+
     @Value("${kafka.topic.transfers-history-transaction}")
     private String kafkaTopic;
 
@@ -63,7 +68,7 @@ public class TransferByPhoneNumberService implements TransferStrategy {
             UpdateBalanceServiceHelper updateBalanceServiceHelper,
             TransferDTOBuilder transferDTOBuilder,
             MapToMakeTransferByPhoneRequest mapToMakeTransferByPhoneRequest,
-            KafkaTemplate<String, TransferDTO> kafkaTemplate) {
+            KafkaTemplate<String, TransferDTO> kafkaTemplate, TaskScheduler taskScheduler) {
         this.accountValidator = accountValidator;
         this.userValidator = userValidator;
         this.accountServiceClient = accountServiceClient;
@@ -74,6 +79,7 @@ public class TransferByPhoneNumberService implements TransferStrategy {
         this.transferDTOBuilder = transferDTOBuilder;
         this.mapToMakeTransferByPhoneRequest = mapToMakeTransferByPhoneRequest;
         this.kafkaTemplate = kafkaTemplate;
+        this.taskScheduler = taskScheduler;
     }
 
     /**
@@ -146,9 +152,22 @@ public class TransferByPhoneNumberService implements TransferStrategy {
     }
 
     @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
-    private void sendKafkaMessage(Transfer transfer, MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+    public void sendKafkaMessage(Transfer transfer, MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
         kafkaTemplate.send(kafkaTopic, transferDTOBuilder.createTransferDTOObject(transfer,
                 accountServiceClient.getAccountResponse(getMainAccountFrom(makeTransferByPhoneRequest)).getClientId(),
                 responseBuilder.getValidateGetAccountResponse(getMainAccountTo(makeTransferByPhoneRequest)).getClientId()));
+    }
+
+    @Recover
+    public void recover(Exception ex, Transfer transfer, MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        scheduleDelayedKafkaMessage(transfer, makeTransferByPhoneRequest);
+    }
+
+    private void scheduleDelayedKafkaMessage(Transfer transfer, MakeTransferByPhoneRequest makeTransferByPhoneRequest) {
+        taskScheduler.schedule(() -> {
+            log.info("Executing delayed Kafka message after three failed attempts for transfer with UUID: {}",
+                    transfer.getUuid());
+            sendKafkaMessage(transfer, makeTransferByPhoneRequest);
+        }, Instant.now().plusSeconds(600));
     }
 }

@@ -257,7 +257,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Recover
-    public void handleOptimisticLockException(OptimisticLockException ex) {
+    public void recover(OptimisticLockException ex) {
         throw new BadRequestException(AccountResponseMessagesEnum.BAD_REQUEST_FOR_AMOUNT.getMessage());
     }
 }

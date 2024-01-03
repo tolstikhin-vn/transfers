@@ -7,6 +7,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -93,6 +94,7 @@ public class KafkaMessageHandlerServiceIntegrationTest {
     }
 
     @Test
+    @DisplayName("Получение сообщения в кафке")
     void testHandleMessage() throws InterruptedException, IOException {
         String jsonMessage = "{\"uuid\":\"87e91d0e-752f-43bc-800b-6b0d992a8c81\",\"clientIdFrom\":\"1\",\"clientIdTo\":\"2\","
                 + "\"accountNumberFrom\":\"4200933666961739\",\"accountNumberTo\":\"4200810666632677\",\"amount\":\"100.00\","

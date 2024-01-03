@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import ru.sovcombank.petbackendtransfers.builder.ResponseBuilder;
 import ru.sovcombank.petbackendtransfers.builder.TransferDTOBuilder;
@@ -20,6 +22,7 @@ import ru.sovcombank.petbackendtransfers.service.helper.UpdateBalanceServiceHelp
 import ru.sovcombank.petbackendtransfers.service.validator.AccountValidator;
 import ru.sovcombank.petbackendtransfers.service.validator.UserValidator;
 
+import java.time.Instant;
 import java.util.Map;
 
 @Slf4j
@@ -42,6 +45,8 @@ public class TransferByAccountNumberService implements TransferStrategy {
 
     private final MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest;
 
+    private final TaskScheduler taskScheduler;
+
     @Value("${kafka.topic.transfers-history-transaction}")
     private String kafkaTopic;
 
@@ -53,7 +58,7 @@ public class TransferByAccountNumberService implements TransferStrategy {
             ResponseBuilder responseBuilder,
             UpdateBalanceServiceHelper updateBalanceServiceHelper,
             TransferDTOBuilder transferDTOBuilder,
-            MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest) {
+            MapToMakeTransferByAccountRequest mapToMakeTransferByAccountRequest, TaskScheduler taskScheduler) {
         this.accountValidator = accountValidator;
         this.userValidator = userValidator;
         this.accountServiceClient = accountServiceClient;
@@ -62,6 +67,7 @@ public class TransferByAccountNumberService implements TransferStrategy {
         this.updateBalanceServiceHelper = updateBalanceServiceHelper;
         this.transferDTOBuilder = transferDTOBuilder;
         this.mapToMakeTransferByAccountRequest = mapToMakeTransferByAccountRequest;
+        this.taskScheduler = taskScheduler;
     }
 
     /**
@@ -119,5 +125,18 @@ public class TransferByAccountNumberService implements TransferStrategy {
                 transfer,
                 accountServiceClient.getAccountResponse(makeTransferByAccountRequest.getAccountNumberFrom()).getClientId(),
                 responseBuilder.getValidateGetAccountResponse(makeTransferByAccountRequest.getAccountNumberTo()).getClientId()));
+    }
+
+    @Recover
+    private void recover(Exception ex, Transfer transfer, MakeTransferByAccountRequest makeTransferByAccountRequest) {
+        scheduleDelayedKafkaMessage(transfer, makeTransferByAccountRequest);
+    }
+
+    private void scheduleDelayedKafkaMessage(Transfer transfer, MakeTransferByAccountRequest makeTransferByAccountRequest) {
+        taskScheduler.schedule(() -> {
+            log.info("Executing delayed Kafka message after three failed attempts for transfer with UUID: {}",
+                    transfer.getUuid());
+            sendKafkaMessage(transfer, makeTransferByAccountRequest);
+        }, Instant.now().plusSeconds(600));
     }
 }

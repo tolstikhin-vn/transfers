@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.modelmapper:modelmapper:3.2.0'
+	implementation 'org.springframework.retry:spring-retry'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
