@@ -46,7 +46,7 @@ docker-compose up
 ### pet-backend-transfers
 **Base URL:** localhost:8083<br> 
 **Endpoint (POST)** /transfers - операция перевода денег<br> 
-**Endpoint (GET)** /transfers/{uuid} - получения информации о транзакции
+**Endpoint (GET)** /transfers/{uuid} - получение информации о транзакции
 
 ### pet-backend-history
 **Base URL:** localhost:8084<br> 
