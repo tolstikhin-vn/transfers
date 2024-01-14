@@ -91,7 +91,7 @@ public class TransferByAccountNumberService implements TransferStrategy {
 
         sendKafkaMessage(transfer, makeTransferByAccountRequest);
 
-        log.info("The transfer from account {} to account{} in the amount of {} was completed successfully",
+        log.info("The transfer from account {} to account {} in the amount of {} was completed successfully",
                 transfer.getAccountNumberFrom(), transfer.getAccountNumberTo(), transfer.getAmount());
 
         return responseBuilder.createMakeTransferResponse(accountServiceClient.getBalanceResponse(

@@ -55,8 +55,6 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountValidator accountValidator;
 
-    private static final int MAX_ACCOUNTS_PER_CURRENCY = 2;
-
     public AccountServiceImpl(AccountRepository accountRepository,
                               ListAccountToGetAccountsResponse listAccountToGetAccountsResponse,
                               CreateAccountRequestToAccount createAccountRequestToAccount,
@@ -90,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
         userServiceClient.checkUserExists(clientId);
 
         // Проверка на лимит (2) кол-ва счетов в одной валюте для одного клиента
-        if (!hasMaxAccountsForCurrency(clientId, createAccountRequest.getCur())) {
+        if (!accountValidator.hasMaxAccountsForCurrency(clientId, createAccountRequest.getCur())) {
             String accountNumber = generateAccountNumber(createAccountRequest.getCur());
 
             Account accountEntity = createAccountRequestToAccount.map(createAccountRequest);
@@ -98,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
             accountEntity.setId(null);
 
             // Если это не первый счет у клиента - значение поля isMain становится false
-            if (hasMoreThenOneAccount(clientId)) {
+            if (accountValidator.hasMoreThenOneAccount(clientId)) {
                 accountEntity.setMain(false);
             }
 
@@ -115,18 +113,6 @@ public class AccountServiceImpl implements AccountService {
     // Генерирует уникальный номер счета на основе валюты.
     private String generateAccountNumber(String cur) {
         return String.format("4200%s666%06d", cur, new Random().nextInt(1000000));
-    }
-
-    // Проверяет, достигнуто ли максимальное количество счетов для указанной валюты у данного клиента.
-    private boolean hasMaxAccountsForCurrency(Integer clientId, String cur) {
-        List<Account> existingAccounts = accountRepository.findByClientIdAndCur(clientId, cur);
-        return existingAccounts.size() >= MAX_ACCOUNTS_PER_CURRENCY;
-    }
-
-    // Проверяет, имеет ли клиент не менее одного счета.
-    private boolean hasMoreThenOneAccount(Integer clientId) {
-        Optional<List<Account>> existingAccounts = accountRepository.findByClientId(clientId);
-        return existingAccounts.filter(accounts -> !accounts.isEmpty()).isPresent();
     }
 
     /**
