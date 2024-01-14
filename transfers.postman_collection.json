@@ -19,7 +19,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n  \"lastName\": \"Ivanov\",\r\n  \"firstName\": \"Ivan\",\r\n  \"fatherName\": \"Ivanovich\",\r\n  \"phoneNumber\": \"78888888888\",\r\n  \"birthDate\": \"15.05.1985\",\r\n  \"passportNumber\": \"8888888888\",\r\n  \"email\": \"ivan@gmail.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -27,15 +27,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/new",
+                                  "raw": "http://localhost:8081/users",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8081",
 									"path": [
-										"users",
-										"new"
+                                      "users"
 									]
 								}
 							},
@@ -48,7 +47,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"Petrov\",\r\n \"firstName\": \"Petr\",\r\n \"fatherName\": \"Petrovich\",\r\n \"phoneNumber\": \"78888888888\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"1234567890\",\r\n \"email\": \"petr@mail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -56,15 +55,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/new",
+                                  "raw": "http://localhost:8081/users",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8081",
 									"path": [
-										"users",
-										"new"
+                                      "users"
 									]
 								}
 							},
@@ -77,7 +75,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"Petrov\",\r\n \"firstName\": \"Petr\",\r\n \"fatherName\": \"Petrovich\",\r\n \"phoneNumber\": \"79999999999\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"8888888888\",\r\n \"email\": \"petr@mail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -85,15 +83,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/new",
+                                  "raw": "http://localhost:8081/users",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8081",
 									"path": [
-										"users",
-										"new"
+                                      "users"
 									]
 								}
 							},
@@ -106,7 +103,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"Petrov\",\r\n \"firstName\": \"Petr\",\r\n \"fatherName\": \"Petrovich\",\r\n \"phoneNumber\": \"00000000000\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"8888888888\",\r\n \"email\": \"petr@mail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -114,15 +111,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/new",
+                                  "raw": "http://localhost:8081/users",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8081",
 									"path": [
-										"users",
-										"new"
+                                      "users"
 									]
 								}
 							},
@@ -135,7 +131,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22091990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -143,15 +139,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/new",
+                                  "raw": "http://localhost:8081/users",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8081",
 									"path": [
-										"users",
-										"new"
+                                      "users"
 									]
 								}
 							},
@@ -164,7 +159,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"Petrov\",\r\n \"firstName\": \"Petr\",\r\n \"fatherName\": \"Petrovich\",\r\n \"phoneNumber\": \"79999999999\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"hhfdbhsuhcbsud\",\r\n \"email\": \"petr@mail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -172,15 +167,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/new",
+                                  "raw": "http://localhost:8081/users",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8081",
 									"path": [
-										"users",
-										"new"
+                                      "users"
 									]
 								}
 							},
@@ -193,7 +187,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"aa\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"78888888889\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"Petrov\",\r\n \"firstName\": \"Petr\",\r\n \"fatherName\": \"Petrovich\",\r\n \"phoneNumber\": \"79999999999\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"7246241301\",\r\n \"email\": \"petrmail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -201,15 +195,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/new",
+                                  "raw": "http://localhost:8081/users",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8081",
 									"path": [
-										"users",
-										"new"
+                                      "users"
 									]
 								}
 							},
@@ -224,7 +217,19 @@
 							"name": "успешно по id",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8081/users/1",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8081",
+                                "path": [
+                                  "users",
+                                  "1"
+                                ]
+                              }
 							},
 							"response": []
 						},
@@ -232,7 +237,19 @@
 							"name": "по id: не найден пользователь",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8081/users/999",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8081",
+                                "path": [
+                                  "users",
+                                  "999"
+                                ]
+                              }
 							},
 							"response": []
 						},
@@ -240,7 +257,20 @@
 							"name": "успешно по номеру телефона",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8081/users/phone-number/77777777778",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8081",
+                                "path": [
+                                  "users",
+                                  "phone-number",
+                                  "77777777778"
+                                ]
+                              }
 							},
 							"response": []
 						},
@@ -248,7 +278,20 @@
 							"name": "по номеру телефона:  не найден пользователь",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8081/users/phone-number/70000000000",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8081",
+                                "path": [
+                                  "users",
+                                  "phone-number",
+                                  "70000000000"
+                                ]
+                              }
 							},
 							"response": []
 						}
@@ -264,7 +307,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"bb\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"70000000000\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"4510666660\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"Smith\",\r\n \"firstName\": \"John\",\r\n \"fatherName\": \"Michael\",\r\n \"phoneNumber\": \"77777777770\",\r\n \"birthDate\": \"12.12.1999\",\r\n \"passportNumber\": \"1234567890\",\r\n \"email\": \"john@mail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -293,7 +336,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"lastName\": \"bb\",\r\n \"firstName\": \"aa\",\r\n \"fatherName\": \"aa\",\r\n \"phoneNumber\": \"70000000000\",\r\n \"birthDate\": \"22.09.1990\",\r\n \"passportNumber\": \"4510666660\",\r\n \"email\": \"ivan@mail.ru\"\r\n}",
+                                  "raw": "{\r\n \"lastName\": \"Smith\",\r\n \"firstName\": \"John\",\r\n \"fatherName\": \"Michael\",\r\n \"phoneNumber\": \"77777777777\",\r\n \"birthDate\": \"12.12.1999\",\r\n \"passportNumber\": \"1415549417\",\r\n \"email\": \"john@mail.ru\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -301,7 +344,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8081/users/1",
+                                  "raw": "http://localhost:8081/users/999",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -309,7 +352,7 @@
 									"port": "8081",
 									"path": [
 										"users",
-										"1"
+                                      "999"
 									]
 								}
 							},
@@ -326,7 +369,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8081/users/5",
+                                  "raw": "http://localhost:8081/users/1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -334,7 +377,7 @@
 									"port": "8081",
 									"path": [
 										"users",
-										"5"
+                                      "1"
 									]
 								}
 							},
@@ -346,7 +389,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8081/users/5",
+                                  "raw": "http://localhost:8081/users/999",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -354,7 +397,7 @@
 									"port": "8081",
 									"path": [
 										"users",
-										"5"
+                                      "999"
 									]
 								}
 							},
@@ -377,7 +420,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{ \r\n    \"clientId\": \"1\" \r\n}",
+                                  "raw": "{ \r\n    \"clientId\": 1,\r\n    \"cur\": \"840\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -385,15 +428,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8082/accounts/new",
+                                  "raw": "http://localhost:8082/accounts",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8082",
 									"path": [
-										"accounts",
-										"new"
+                                      "accounts"
 									]
 								}
 							},
@@ -406,7 +448,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{ \r\n    \"clientId\": \"1\" \r\n}",
+                                  "raw": "{ \r\n    \"clientId\": 999,\r\n    \"cur\": \"810\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -414,15 +456,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8082/accounts/new",
+                                  "raw": "http://localhost:8082/accounts",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8082",
 									"path": [
-										"accounts",
-										"new"
+                                      "accounts"
 									]
 								}
 							},
@@ -437,7 +478,19 @@
 							"name": "успешно",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8082/accounts/1",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8082",
+                                "path": [
+                                  "accounts",
+                                  "1"
+                                ]
+                              }
 							},
 							"response": []
 						},
@@ -445,7 +498,19 @@
 							"name": "не найден клиент",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8082/accounts/999",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8082",
+                                "path": [
+                                  "accounts",
+                                  "999"
+                                ]
+                              }
 							},
 							"response": []
 						}
@@ -460,7 +525,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8082/accounts/4200810666538495",
+                                  "raw": "http://localhost:8082/accounts/4200810666111595",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -468,7 +533,7 @@
 									"port": "8082",
 									"path": [
 										"accounts",
-										"4200810666538495"
+                                      "4200810666111595"
 									]
 								}
 							},
@@ -480,7 +545,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8082/accounts/4200810666538495",
+                                  "raw": "http://localhost:8082/accounts/4200999666538495",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -488,7 +553,7 @@
 									"port": "8082",
 									"path": [
 										"accounts",
-										"4200810666538495"
+                                      "4200999666538495"
 									]
 								}
 							},
@@ -505,7 +570,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8082/accounts/balance/4200810666538495",
+                                  "raw": "http://localhost:8082/accounts/balance/4200810666111595",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -514,7 +579,7 @@
 									"path": [
 										"accounts",
 										"balance",
-										"4200810666538495"
+                                      "4200810666111595"
 									]
 								}
 							},
@@ -526,7 +591,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8082/accounts/balance/4200810666538495",
+                                  "raw": "http://localhost:8082/accounts/balance/4200999666782523",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -535,7 +600,7 @@
 									"path": [
 										"accounts",
 										"balance",
-										"4200810666538495"
+                                      "4200999666782523"
 									]
 								}
 							},
@@ -561,7 +626,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8082/accounts/balance/4200840666968319",
+                                  "raw": "http://localhost:8082/accounts/balance/4200810666091702",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -570,7 +635,7 @@
 									"path": [
 										"accounts",
 										"balance",
-										"4200840666968319"
+                                      "4200810666091702"
 									]
 								}
 							},
@@ -623,7 +688,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 13,\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200933666727550\",\r\n    \"accountNumberTo\": \"4200840666729657\",\r\n    \"amount\": 315.37,\r\n    \"cur\": \"933\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -631,15 +696,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -652,7 +716,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 999,\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -660,15 +724,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -681,6 +744,34 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
+                                  "raw": "{\r\n    \"clientId\": 3,\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666111595\",\r\n    \"accountNumberTo\": \"4200810666433379\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "options": {
+                                    "raw": {
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                              "url": {
+                                "raw": "http://localhost:8083/transfers",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8083",
+                                "path": [
+                                  "transfers"
+                                ]
+                              }
+                            },
+                          "response": []
+                        },
+                      {
+                        "name": "счет отправителя закрыт",
+                        "request": {
+                          "method": "POST",
+                          "header": [],
+                          "body": {
+                            "mode": "raw",
 									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
 									"options": {
 										"raw": {
@@ -710,7 +801,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 1,\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200999666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -718,15 +809,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -739,7 +829,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 1,\r\n    \"requestType\": \"EMAIL\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -747,15 +837,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -768,7 +857,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200810666123123\",\r\n    \"accountNumberTo\": \"4200810666777888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 3,\r\n    \"requestType\": \"ACCOUNT\",\r\n    \"accountNumberFrom\": \"4200933666597559\",\r\n    \"accountNumberTo\": \"4200840666146513\",\r\n    \"amount\": 10,\r\n    \"cur\": \"933\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -776,15 +865,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -802,7 +890,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"PHONE\",\r\n    \"accountNumberFrom\": \"79999999999\",\r\n    \"accountNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 12,\r\n    \"requestType\": \"PHONE\",\r\n    \"phoneNumberFrom\": \"79999999999\",\r\n    \"phoneNumberTo\": \"78888888888\",\r\n    \"amount\": 100,\r\n    \"cur\": \"840\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -810,15 +898,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -831,7 +918,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"PHONE\",\r\n    \"accountNumberFrom\": \"79999999999\",\r\n    \"accountNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 999,\r\n    \"requestType\": \"PHONE\",\r\n    \"phoneNumberFrom\": \"79999999999\",\r\n    \"phoneNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -839,15 +926,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -860,7 +946,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"clientId\": \"1\",\r\n    \"requestType\": \"PHONE\",\r\n    \"accountNumberFrom\": \"79999999999\",\r\n    \"accountNumberTo\": \"79999999988\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
+                                  "raw": "{\r\n    \"clientId\": 1,\r\n    \"requestType\": \"PHONE\",\r\n    \"phoneNumberFrom\": \"70000000000\",\r\n    \"phoneNumberTo\": \"78888888889\",\r\n    \"amount\": 100,\r\n    \"cur\": \"810\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -868,15 +954,14 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8083/transfers/new",
+                                  "raw": "http://localhost:8083/transfers",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8083",
 									"path": [
-										"transfers",
-										"new"
+                                      "transfers"
 									]
 								}
 							},
@@ -986,7 +1071,19 @@
 							"name": "не найден перевод",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8083/transfers/85b48bf5-84f8-402c-90ec-000000000000",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8083",
+                                "path": [
+                                  "transfers",
+                                  "85b48bf5-84f8-402c-90ec-000000000000"
+                                ]
+                              }
 							},
 							"response": []
 						}
@@ -1004,7 +1101,19 @@
 							"name": "успешно",
 							"request": {
 								"method": "GET",
-								"header": []
+                              "header": [],
+                              "url": {
+                                "raw": "http://localhost:8084/history/1",
+                                "protocol": "http",
+                                "host": [
+                                  "localhost"
+                                ],
+                                "port": "8084",
+                                "path": [
+                                  "history",
+                                  "1"
+                                ]
+                              }
 							},
 							"response": []
 						},
