@@ -255,7 +255,7 @@ public class AccountControllerIntegrationTest {
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, responseEntity.getHeaders().getContentType().toString());
-        assertEquals(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage(),
+        assertEquals(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage() + "1000.00",
                 Objects.requireNonNull(responseEntity.getBody()).getMessage()
         );
     }

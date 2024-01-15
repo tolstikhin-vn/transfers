@@ -215,7 +215,8 @@ public class AccountServiceImpl implements AccountService {
 
             log.info("Balance updated successfully for account with number: {}", accountNumber);
 
-            return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage());
+            return new UpdateBalanceResponse(AccountResponseMessagesEnum.BALANCE_UPDATED_SUCCESSFULLY.getMessage()
+                    + changedAccount.getBalance().toPlainString());
         } else {
             log.error("AccountNotFoundException occurred: {}", AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());
             throw new AccountNotFoundException(AccountResponseMessagesEnum.ACCOUNT_NOT_FOUND.getMessage());

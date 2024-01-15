@@ -9,7 +9,7 @@ public enum AccountResponseMessagesEnum {
     USER_NOT_FOUND("Не найден клиент по запросу"),
     ACCOUNT_NOT_FOUND("Не найден счет по запросу"),
     ACCOUNT_DELETED_SUCCESSFULLY("Счет успешно закрыт"),
-    BALANCE_UPDATED_SUCCESSFULLY("Баланс успешно обновлен");
+    BALANCE_UPDATED_SUCCESSFULLY("Баланс успешно обновлен. Ваш баланс: ");
 
     private final String message;
 
